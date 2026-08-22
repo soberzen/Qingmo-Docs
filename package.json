@@ -1,0 +1,62 @@
+{
+  "name": "Qingmo Docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Qingmo Docs 基于 NestJS、PostgreSQL、ProseMirror、Tiptap、YJS 实现的 CRDT 协同文档编辑器",
+  "keywords": [
+    "CRDT",
+    "nestjs",
+    "postgresql",
+    "prosemirror",
+    "react",
+    "tiptap",
+    "yjs"
+  ],
+  "author": "sober",
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "docker:start": "docker compose -f .devcontainer/docker-compose.yml up -d",
+    "docker:stop": "docker compose -f .devcontainer/docker-compose.yml down",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "commit": "git-cz",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/config-conventional": "^21.2.2",
+    "@types/node": "catalog:",
+    "commitizen": "^4.3.2",
+    "commitlint": "^21.2.2",
+    "cz-git": "^1.13.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
+    "oxfmt": "^0.64.0",
+    "oxlint": "^1.79.0",
+    "turbo": "^2.10.11",
+    "typescript": "^6.0.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "oxlint --fix",
+      "oxfmt"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-git"
+    }
+  },
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=11.11.0"
+  },
+  "volta": {
+    "node": "24.19.0"
+  },
+  "packageManager": "pnpm@11.11.0"
+}

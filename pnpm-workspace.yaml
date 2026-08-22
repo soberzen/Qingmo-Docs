@@ -1,0 +1,14 @@
+packages:
+  - 'apps/frontend/*'
+  - 'apps/backend/*'
+  - 'packages/*'
+
+allowBuilds:
+  unrs-resolver: set this to true or false
+
+catalog:
+  'react': '19'
+  'react-dom': '19'
+  '@types/react': '19'
+  '@types/react-dom': '19'
+  '@types/node': '24'

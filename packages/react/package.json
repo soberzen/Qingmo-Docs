@@ -1,0 +1,39 @@
+{
+  "name": "@qingmo/react",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Qingmo React Editor",
+  "keywords": [
+    "editor",
+    "prosemirror",
+    "react",
+    "tiptap"
+  ],
+  "author": "sober",
+  "type": "module",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "clean": "rm -rf dist",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@qingmo/core": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tsdown": "^0.22.14"
+  }
+}
