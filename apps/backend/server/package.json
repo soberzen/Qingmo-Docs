@@ -1,34 +1,15 @@
 {
-  "name": "server",
+  "name": "@qingmo/server",
   "version": "0.0.0",
   "private": true,
-  "description": "",
-  "license": "UNLICENSED",
-  "author": "",
   "scripts": {
-    "build": "nest build",
-    "dev": "pnpm run start:dev",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "check-types": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@nestjs/common": "^11.0.1",
-    "@nestjs/core": "^11.0.1",
-    "@nestjs/platform-express": "^11.0.1",
-    "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
-  },
-  "devDependencies": {
-    "@nestjs/cli": "^11.0.0",
-    "@nestjs/schematics": "^11.0.0",
-    "@types/express": "^5.0.0",
-    "@types/node": "catalog:",
-    "source-map-support": "^0.5.21",
-    "ts-loader": "^9.5.2",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0"
+    "dev": "make dev",
+    "build": "make build",
+    "start": "make run",
+    "test": "make test",
+    "check-types": "go vet ./...",
+    "clean": "make clean",
+    "db:start": "make docker-run",
+    "db:stop": "make docker-down"
   }
 }

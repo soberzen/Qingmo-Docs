@@ -18,6 +18,9 @@
     ".": {
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.mts"
+    },
+    "./style.css": {
+      "import": "./dist/style/index.css"
     }
   },
   "scripts": {
@@ -26,7 +29,14 @@
     "clean": "rm -rf dist",
     "check-types": "tsc --noEmit"
   },
+  "dependencies": {
+    "@tiptap/core": "^3.30.5",
+    "@tiptap/extension-code-block": "^3.30.5",
+    "@tiptap/pm": "^3.30.5",
+    "shiki": "^4.4.3"
+  },
   "devDependencies": {
+    "@tsdown/css": "^0.22.14",
     "tsdown": "^0.22.14"
   }
 }
