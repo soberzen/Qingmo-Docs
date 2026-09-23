@@ -18,7 +18,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	router.Use(middleware.RequestID())
 	router.Use(middleware.StructuredLogger(logger))
 	router.Use(gin.Recovery())
-	router.GET("/hello", handler.HelloWorld)
+	api := router.Group("/api")
+	{
+		v1 := api.Group("/v1")
+		{
+			v1.GET("/hello", handler.HelloWorld)
+		}
+	}
 
 	return router
 }
