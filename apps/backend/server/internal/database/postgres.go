@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"time"
 
+	"doc-server/internal/entity"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -51,6 +53,10 @@ func New() Service {
 	sqlDB.SetMaxOpenConns(50)
 	sqlDB.SetMaxIdleConns(25)
 	sqlDB.SetConnMaxLifetime(5 * time.Minute)
+
+	if err := db.AutoMigrate(&entity.UserEntity{}, &entity.RefreshSessionEntity{}); err != nil {
+		log.Fatalf("auto migrate database failed: %v", err)
+	}
 
 	dbInstance = &service{
 		db: db,

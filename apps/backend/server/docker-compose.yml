@@ -19,6 +19,18 @@ services:
     volumes:
       - qingmo-postgresql-data:/var/lib/postgresql
 
+  qingmo-redis:
+    image: redis:8-alpine
+    container_name: qingmo-redis
+    ports:
+      - '6379:6379'
+    command:
+      - redis-server
+      - --appendonly
+      - 'yes'
+    volumes:
+      - qingmo-redis-data:/data
+
 networks:
   default:
     name: qingmo-network
@@ -26,3 +38,4 @@ networks:
 
 volumes:
   qingmo-postgresql-data:
+  qingmo-redis-data:

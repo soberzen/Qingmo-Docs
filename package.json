@@ -47,6 +47,9 @@
     "*.{js,jsx,ts,tsx}": [
       "oxlint --fix",
       "oxfmt"
+    ],
+    "*.go": [
+      "gofmt -w"
     ]
   },
   "config": {
