@@ -1,3 +1,4 @@
+import { EditorFrame } from '@qingmo/react';
 import { Button } from '@qingmo/shadcn/components/button';
 import { Input } from '@qingmo/shadcn/components/input';
 import { Label } from '@qingmo/shadcn/components/label';
@@ -21,7 +22,7 @@ function App() {
             Playground
           </h1>
           <p className='text-sm leading-6 text-muted-foreground'>
-            React 编辑器与共享 UI 的独立调试环境。
+            编辑器界面与共享 UI 的独立调试环境。
           </p>
         </header>
 
@@ -36,11 +37,16 @@ function App() {
             编辑器预览
           </h2>
           <p className='mt-2 text-sm leading-6 text-muted-foreground'>
-            @qingmo/react 已接入，目前尚未导出编辑器组件。
+            @qingmo/react 负责适配与组装，界面组件由 @qingmo/editor-ui 实现。
           </p>
-          <div className='mt-6 flex min-h-48 items-center justify-center rounded-lg border border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground'>
-            后续在此接入 React 编辑器组件
-          </div>
+          <EditorFrame
+            className='mt-6'
+            toolbar={<span className='text-sm font-medium'>编辑器操作栏</span>}
+          >
+            <div className='flex min-h-40 items-center justify-center rounded-lg border border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground'>
+              后续在此接入编辑器内容与节点渲染组件
+            </div>
+          </EditorFrame>
         </section>
 
         <section

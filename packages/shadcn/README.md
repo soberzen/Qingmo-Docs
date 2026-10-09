@@ -1,7 +1,7 @@
 # Shared UI
 
 `@qingmo/shadcn` is a private source package for reusable components, utilities,
-and the Qingmo Docs theme. The web app and React bindings consume it through
+and the Qingmo Docs theme. Web, playground, and editor UI consume it through
 `workspace:*`. There is no separate build or npm publishing workflow.
 
 ## Components
@@ -14,6 +14,8 @@ and the Qingmo Docs theme. The web app and React bindings consume it through
 
 App-specific UI, including the login page's `AnimatedCharacters`, belongs in the
 web app. Pages, forms, routes, and state management stay with their consumers.
+Editor-specific node views, toolbars, and menus belong in `@qingmo/editor-ui`.
+React composes editor-ui components without a direct dependency on this package.
 
 ## Imports
 
@@ -46,8 +48,13 @@ entry inside the application's `src` directory:
 
 The shared stylesheet scans this package's source. The application's `@source`
 directive scans its own source; adjust that path relative to its CSS entry if
-needed. The host application owns font declarations and mappings, page layout,
-and app-specific animations such as `eye-blink`.
+needed. Editor hosts can import `@qingmo/react/styles.css` instead; it forwards
+the editor UI stylesheet, which includes this theme and additionally registers
+editor UI source. Use one of these style entries so the shared theme is imported
+once.
+
+The host application owns font declarations and mappings, page layout, and
+app-specific animations such as `eye-blink`.
 
 ## Adding Components
 

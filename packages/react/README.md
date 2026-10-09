@@ -1,33 +1,53 @@
 # React
 
-React bindings for the Qingmo Docs editor core.
+`@qingmo/react` is the React integration and public editor entry for Qingmo. It
+depends on `@qingmo/core` for editor behavior and `@qingmo/editor-ui` for view
+components. It owns editor initialization, hooks, context, and component
+composition. Concrete styled components are implemented in editor-ui, not here.
 
-The package depends on `@qingmo/shadcn` through `workspace:*` so editor UI can
-use the same components and theme as the web app. This dependency does not add
-editor UI or change the React package's existing build.
+The current entry exports `EditorFrame` and its props from editor-ui. Editor
+initialization APIs and concrete node views will be added as the editor is
+implemented. There is no direct dependency on shadcn or Tailwind.
 
-## Shared UI
+## Imports and styles
 
-Import shared components and utilities by package name:
+Applications consume the public React entry:
 
 ```tsx
-import { Button } from '@qingmo/shadcn/components/button';
-import { cn } from '@qingmo/shadcn/lib/utils';
+import { EditorFrame } from '@qingmo/react';
 ```
 
-The host application imports `@qingmo/shadcn/styles.css` once in its CSS entry,
-adds an `@source` directive for its own source files, and controls its fonts and
-page layout. See [the shared UI package](../shadcn/README.md) for setup and CLI
-usage.
+Import the stylesheet once from the application's CSS entry:
+
+```css
+@import '@qingmo/react/styles.css';
+
+@source './';
+```
+
+This stylesheet forwards editor-ui's style entry, including its source
+registration and the shared shadcn theme. Applications own their fonts and page
+layout and use Tailwind's Vite plugin to compile the styles.
+
+## Package boundaries
+
+- core: schemas, commands, parsing, serialization, and highlighting
+- react: integration, state, hooks, composition, and public editor exports
+- editor-ui: concrete node views, toolbars, menus, and editor layouts
+- shadcn: generic UI primitives, utilities, and theme
+
+Editor UI must not import this package. Receive editor state and callbacks
+through props to keep the dependency direction from React to editor-ui.
 
 ## Scripts
 
-- `pnpm build`
-- `pnpm dev`
-- `pnpm clean`
-- `pnpm check-types`
+Run from the repository root:
 
-## Structure
+- `pnpm --filter @qingmo/react build`
+- `pnpm --filter @qingmo/react dev`
+- `pnpm --filter @qingmo/react clean`
+- `pnpm --filter @qingmo/react check-types`
 
-- `src/index.ts` public entry
-- `dist/` build output
+JavaScript and types use the existing tsdown dist build. The CSS subpath exposes
+the source stylesheet. Use `pnpm dev:playground` to build dependencies and run
+the editor package watchers alongside the playground.

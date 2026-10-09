@@ -1,7 +1,6 @@
-@import '@qingmo/shadcn/styles.css';
+@import '@qingmo/react/styles.css';
 
 @source './';
-@source '../../packages/react/src';
 
 @layer base {
   html {
