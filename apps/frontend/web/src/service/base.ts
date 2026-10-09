@@ -1,6 +1,7 @@
+import { showToast } from '@qingmo/shadcn/lib/toast';
+
 import { UPLOAD_URL } from '@/config';
 import { getToken } from '@/utils/auth';
-import { showToast } from '@/utils/toast';
 
 import type { FetchOptionType } from './fetch';
 import { base } from './fetch';

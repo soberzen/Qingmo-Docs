@@ -8,6 +8,7 @@ import {
 import { Input } from '@qingmo/shadcn/components/input';
 import { InteractiveHoverButton } from '@qingmo/shadcn/components/interactive-hover-button';
 import { PasswordToggleButton } from '@qingmo/shadcn/components/password-toggle-button';
+import { showToast } from '@qingmo/shadcn/lib/toast';
 import { memo, useCallback, useState } from 'react';
 import { Controller, useForm, type Control } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
@@ -15,7 +16,6 @@ import { z } from 'zod';
 
 import { register } from '@/service/api/auth';
 import { useAuthVisualStore } from '@/stores/auth/use-auth-visual';
-import { showToast } from '@/utils/toast';
 
 const signupSchema = z
   .object({

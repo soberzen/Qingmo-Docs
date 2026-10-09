@@ -9,6 +9,7 @@ import {
 import { Input } from '@qingmo/shadcn/components/input';
 import { InteractiveHoverButton } from '@qingmo/shadcn/components/interactive-hover-button';
 import { PasswordToggleButton } from '@qingmo/shadcn/components/password-toggle-button';
+import { showToast } from '@qingmo/shadcn/lib/toast';
 import { useCallback, memo, useState } from 'react';
 import { Controller, useForm, type Control } from 'react-hook-form';
 import { Link, useSearchParams, useNavigate } from 'react-router';
@@ -17,7 +18,6 @@ import { z } from 'zod';
 import { login } from '@/service/api/auth';
 import { useAuthVisualStore } from '@/stores/auth/use-auth-visual';
 import { setToken } from '@/utils/auth';
-import { showToast } from '@/utils/toast';
 
 const loginSchema = z.object({
   email: z.email({ message: '请输入有效的邮箱地址' }),

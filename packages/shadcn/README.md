@@ -8,7 +8,7 @@ and the Qingmo Docs theme. The web app and React bindings consume it through
 
 - Standard UI: Button, Checkbox, Input, Label, Separator, Field, and Toaster
 - Additional UI: PasswordToggleButton, InteractiveHoverButton, and LumaSpin
-- Utilities: `cn`
+- Utilities: `cn`, `showToast`, and `ToastType`
 - Styles: theme colors, radii, light and dark themes, shared base rules, and the
   LumaSpin animation
 
@@ -20,12 +20,18 @@ web app. Pages, forms, routes, and state management stay with their consumers.
 ```tsx
 import { Button } from '@qingmo/shadcn/components/button';
 import { cn } from '@qingmo/shadcn/lib/utils';
+import { showToast } from '@qingmo/shadcn/lib/toast';
 ```
 
 Source exports are available under `@qingmo/shadcn/components/*`,
 `@qingmo/shadcn/lib/*`, and `@qingmo/shadcn/hooks/*`. Use these package paths
 instead of importing another package's source by relative path or a TypeScript
 alias.
+
+`showToast` provides success, error, info, warning, and loading notifications.
+Defaults are top-center placement, a 3000 ms duration, and rich colors; per-call
+options override them. Mount `Toaster` once in the host application. Keep
+business conditions and notification messages in the calling application.
 
 ## Styles
 

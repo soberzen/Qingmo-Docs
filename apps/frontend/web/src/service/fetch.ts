@@ -1,9 +1,9 @@
+import { showToast } from '@qingmo/shadcn/lib/toast';
 import type { BeforeRequestHook, AfterResponseHook, Hooks } from 'ky';
 import ky, { HTTPError } from 'ky';
 
 import { API_PREFIX } from '@/config';
 import { getToken, removeToken, setToken } from '@/utils/auth';
-import { showToast } from '@/utils/toast';
 
 import type { IOtherOptions } from './base';
 
