@@ -5,9 +5,10 @@ depends on `@qingmo/core` for editor behavior and `@qingmo/editor-ui` for view
 components. It owns editor initialization, hooks, context, and component
 composition. Concrete styled components are implemented in editor-ui, not here.
 
-The current entry exports `EditorFrame` and its props from editor-ui. Editor
-initialization APIs and concrete node views will be added as the editor is
-implemented. There is no direct dependency on shadcn or Tailwind.
+The current entry exports `EditorFrame`, `ImageBlockFrame`, and their props
+from editor-ui. Editor initialization APIs and concrete node views will be
+added as the editor is implemented. There is no direct dependency on shadcn
+or Tailwind.
 
 ## Imports and styles
 

@@ -16,7 +16,8 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@qingmo/shadcn": "workspace:*"
+    "@qingmo/shadcn": "workspace:*",
+    "lucide-react": "^1.33.0"
   },
   "devDependencies": {
     "@types/react": "catalog:",
