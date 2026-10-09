@@ -2,6 +2,7 @@ packages:
   - 'apps/frontend/*'
   - 'apps/backend/*'
   - 'packages/*'
+  - 'playground'
 
 allowBuilds:
   unrs-resolver: set this to true or false

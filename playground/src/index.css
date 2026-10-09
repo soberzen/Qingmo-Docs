@@ -1,0 +1,19 @@
+@import '@qingmo/shadcn/styles.css';
+
+@source './';
+@source '../../packages/react/src';
+
+@layer base {
+  html {
+    @apply font-sans antialiased;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+  }
+
+  #root {
+    min-height: 100svh;
+  }
+}
