@@ -1,18 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { memo, useCallback, useState } from 'react';
-import { Controller, useForm, type Control } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router';
-import { z } from 'zod';
-
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
-import { PasswordToggleButton } from '@/components/ui/password-toggle-button';
+} from '@qingmo/shadcn/components/field';
+import { Input } from '@qingmo/shadcn/components/input';
+import { InteractiveHoverButton } from '@qingmo/shadcn/components/interactive-hover-button';
+import { PasswordToggleButton } from '@qingmo/shadcn/components/password-toggle-button';
+import { memo, useCallback, useState } from 'react';
+import { Controller, useForm, type Control } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router';
+import { z } from 'zod';
+
 import { register } from '@/service/api/auth';
 import { useAuthVisualStore } from '@/stores/auth/use-auth-visual';
 import { showToast } from '@/utils/toast';

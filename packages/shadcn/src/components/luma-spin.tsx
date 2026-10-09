@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 
 type LumaSpinProps = Omit<ComponentProps<'div'>, 'children'> & {
   label?: string;

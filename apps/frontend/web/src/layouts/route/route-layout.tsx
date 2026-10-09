@@ -1,7 +1,7 @@
+import { LumaSpin } from '@qingmo/shadcn/components/luma-spin';
 import { Suspense } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router';
 
-import { LumaSpin } from '@/components/ui/luma-spin';
 import { useAuthStore } from '@/stores/auth/use-auth';
 
 const PageLoading = () => {

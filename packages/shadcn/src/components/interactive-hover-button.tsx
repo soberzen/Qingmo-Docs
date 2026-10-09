@@ -2,7 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import type { ButtonHTMLAttributes } from 'react';
 import React, { forwardRef } from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 
 interface InteractiveHoverButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;

@@ -1,6 +1,5 @@
+import { Toaster } from '@qingmo/shadcn/components/sonner';
 import { RouterProvider } from 'react-router';
-
-import { Toaster } from '@/components/ui/sonner';
 
 import { router } from './router/routes';
 

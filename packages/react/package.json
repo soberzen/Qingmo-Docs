@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@qingmo/core": "workspace:*",
+    "@qingmo/shadcn": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

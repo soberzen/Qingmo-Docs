@@ -1,19 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, memo, useState } from 'react';
-import { Controller, useForm, type Control } from 'react-hook-form';
-import { Link, useSearchParams, useNavigate } from 'react-router';
-import { z } from 'zod';
-
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from '@qingmo/shadcn/components/checkbox';
 import {
   Field,
   FieldGroup,
   FieldLabel,
   FieldError,
-} from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
-import { PasswordToggleButton } from '@/components/ui/password-toggle-button';
+} from '@qingmo/shadcn/components/field';
+import { Input } from '@qingmo/shadcn/components/input';
+import { InteractiveHoverButton } from '@qingmo/shadcn/components/interactive-hover-button';
+import { PasswordToggleButton } from '@qingmo/shadcn/components/password-toggle-button';
+import { useCallback, memo, useState } from 'react';
+import { Controller, useForm, type Control } from 'react-hook-form';
+import { Link, useSearchParams, useNavigate } from 'react-router';
+import { z } from 'zod';
+
 import { login } from '@/service/api/auth';
 import { useAuthVisualStore } from '@/stores/auth/use-auth-visual';
 import { setToken } from '@/utils/auth';

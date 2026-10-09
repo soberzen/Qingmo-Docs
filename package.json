@@ -19,6 +19,7 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
+    "shadcn:add": "pnpm --filter @qingmo/shadcn exec shadcn add --cwd ../../apps/frontend/web",
     "db:start": "pnpm --filter @qingmo/server db:start",
     "db:stop": "pnpm --filter @qingmo/server db:stop",
     "docker:start": "docker compose -f .devcontainer/docker-compose.yml up -d",

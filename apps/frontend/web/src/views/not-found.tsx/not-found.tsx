@@ -1,6 +1,5 @@
+import { Button } from '@qingmo/shadcn/components/button';
 import { Link, useNavigate } from 'react-router';
-
-import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
   const navigate = useNavigate();
