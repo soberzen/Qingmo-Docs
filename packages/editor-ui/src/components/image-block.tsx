@@ -302,7 +302,7 @@ function ImageBlockContent({
           data-slot='image-frame'
           data-resizing={isResizing || undefined}
           className={cn(
-            'group/image relative mx-auto max-w-full rounded-lg border bg-muted/40',
+            'group/image relative mx-auto max-w-full rounded-lg bg-muted/40',
             isResizing && 'select-none ring-2 ring-ring',
           )}
           style={{
@@ -329,12 +329,12 @@ function ImageBlockContent({
                 type='button'
                 aria-label={`${label}调整图片大小`}
                 className={cn(
-                  'absolute z-10 flex size-6 items-center justify-center rounded-sm outline-none transition-opacity focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:opacity-0 sm:group-hover/image:opacity-100 sm:group-focus-within/image:opacity-100',
+                  'absolute z-10 flex size-6 items-center justify-center rounded-sm outline-none transition-opacity sm:opacity-0 sm:group-hover/image:opacity-100 sm:group-focus-within/image:opacity-100',
                   isResizing && 'sm:opacity-100',
                   position,
                 )}
               >
-                <span className='size-3 rounded-sm border-2 border-ring bg-background shadow-sm' />
+                <span className='pointer-events-none size-3 rounded-sm border-2 border-ring bg-background shadow-sm' />
               </button>
             ))}
         </div>
