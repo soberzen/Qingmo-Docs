@@ -22,7 +22,7 @@ playground 启动前会通过 Turbo 构建 React 包及其依赖，因为 React 
 
 当前页面通过 React 包使用 editor-ui 的 `EditorFrame`
 布局组件，并保留图片块、共享基础组件和通知示例。数学公式区域直接初始化 Tiptap
-Editor，加载 core 中的 `MathBlock`，用于测试节点实现。
+Editor，加载 core 中的 `MathBlock` 和 `MathInline`，用于测试节点实现。
 
 ## MathBlock 测试
 
@@ -34,7 +34,7 @@ Editor，加载 core 中的 `MathBlock`，用于测试节点实现。
 
 1. 点击“选择第一条公式”，修改上方 LaTeX，再点击更新或删除。首条公式位于
    `pos = 0`。
-2. 点击编辑器空白段落，在上方输入 LaTeX，然后点击“插入公式”。
+2. 点击编辑器空白段落，在上方输入 LaTeX，然后点击“插入块公式”。
 3. 在编辑器空白段落逐字输入
    `$$a+b$$`，展开“查看当前文档 JSON”检查转换结果。粘贴不会触发键入规则。
 4. 把公式更新为 `\unknown`，检查错误显示，再改回 `\sqrt{x}`，检查是否恢复。
@@ -58,6 +58,50 @@ Editor，加载 core 中的 `MathBlock`，用于测试节点实现。
 测试页直接加载 core 的 MathBlock。共享 `Paragraph.renderHTML`
 当前缺少内容占位符，测试页通过局部 `DemoParagraph` 补上
 `0`，保证段落文字和键入测试正常；共享 Paragraph 源码没有改动。
+
+## MathInline 测试
+
+行内公式与块公式共用测试编辑器和 LaTeX 输入框。MathInline 使用
+`span[data-type="math-inline"]` 保存 HTML，公式内容保存在
+`data-latex`，KaTeX 以行内模式显示。Markdown 使用
+`$...$`，节点和 tokenizer 名称均为 `mathInline`。
+
+1. 在空白段落逐字输入
+   `before $a+b$ after`，检查正文、公式、正文是否保持在同一段落，且公式前后没有残留
+   `$`。
+2. 输入
+   `$$a+b$$`，检查仍生成块公式；行内规则跳过双美元符号、转义的起始美元符号和跨行公式。
+3. 点击“选择第一条行内公式”，修改 LaTeX 后点击更新或删除。也可以点击编辑器中的行内公式直接选择。
+4. 点击正文中的插入位置，在上方填写 LaTeX，再点击“插入行内公式”；插入后可继续输入正文。
+5. 使用 `\unknown` 检查错误显示，再改回 `\sqrt{x}`
+   检查恢复；切换只读和测试 HTML 序列化也同时适用于行内公式。
+
+公开命令与 MathBlock 对应，均支持可选的节点位置 `pos`：
+
+```ts
+editor.commands.insertInlineMath({ latex: 'a+b' });
+editor.commands.updateInlineMath({ latex: 'x^2', pos });
+editor.commands.deleteInlineMath({ pos });
+```
+
+## Markdown 导入和导出
+
+公式测试区提供“Markdown 源码”输入框、“从 Markdown 导入”和“导出 Markdown”按钮。导入会替换当前示例文档。默认样例同时包含正文、`$a+b$`
+行内公式、多行 `$$...$$`
+块公式和公式后的正文；导出结果可以复制回源码框再次导入。
+
+测试页加载 `@tiptap/markdown`，实际调用
+`editor.markdown.parse()`，再把解析结果交给 `setContent()`。解析器的根节点叫
+`doc`，Qingmo 的根节点叫 `document`，所以导入时将根节点类型映射到
+`editor.schema.topNodeType.name`。空 Markdown 补一个空段落，满足 `block+`
+的结构要求。导出调用 `editor.getMarkdown()`。
+
+这条路径会运行公式扩展的 `markdownTokenizer` 和 `parseMarkdown`，不是
+`addInputRules()` 或
+`addPasteRules()`。输入规则负责逐字键入，粘贴规则负责编辑器粘贴事件，两者不等于整篇 Markdown 导入。
+
+2026-10-10 已通过真实解析和编辑器集成验证：正文和两类公式混排、多条行内公式、单行块公式、多行块公式中的 LaTeX 反斜杠、导出后再次导入和空输入，共 6 个场景。浏览器也已验证默认样例渲染，以及导出后再次导入的文档 JSON 保持一致。当前正则及正文序列化对转义美元符号的处理仍有限制，暂不保证
+`\$` 的完整往返转换。
 
 ## 构建与检查
 

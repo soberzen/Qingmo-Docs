@@ -42,7 +42,7 @@ function App() {
               数学公式测试
             </h2>
             <p className='mt-2 text-sm leading-6 text-muted-foreground'>
-              测试 MathBlock 的公式渲染、节点命令和输入规则。
+              测试 MathBlock 和 MathInline 的公式渲染、节点命令和输入规则。
             </p>
             <MathBlockDemo />
           </section>

@@ -2,14 +2,14 @@ import { Node, mergeAttributes, nodeInputRule } from '@tiptap/core';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import { type KatexOptions, render } from 'katex';
 
-export type MathBlockOptions = {
+export type MathInlineOptions = {
   /**
    * KaTeX渲染配置
    */
   katexOptions?: KatexOptions | undefined;
   /**
-   * 点击数学块时触发
-   * @param node MathBlock节点 node.attrs.latex
+   * 点击行内公式时触发
+   * @param node MathInline节点 node.attrs.latex
    * @param pos 节点在文档中的位置
    * @returns 无返回值
    */
@@ -18,10 +18,13 @@ export type MathBlockOptions = {
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
-    mathBlock: {
-      insertBlockMath: (options: { latex: string; pos?: number }) => ReturnType;
-      deleteBlockMath: (options?: { pos?: number }) => ReturnType;
-      updateBlockMath: (options?: {
+    mathInline: {
+      insertInlineMath: (options: {
+        latex: string;
+        pos?: number;
+      }) => ReturnType;
+      deleteInlineMath: (options?: { pos?: number }) => ReturnType;
+      updateInlineMath: (options?: {
         latex: string;
         pos?: number;
       }) => ReturnType;
@@ -29,15 +32,22 @@ declare module '@tiptap/core' {
   }
 }
 
-export const MathBlock = Node.create<MathBlockOptions>({
-  name: 'mathBlock',
-  group: 'block',
+const mathInlineInputRegex =
+  /(?<![\\$])(\$(?!\$)((?:\\[^\r\n]|[^\\$\r\n])+)\$(?!\$))$/;
+const mathInlineMarkdownRegex = /^\$(?!\$)((?:\\[^\r\n]|[^\\$\r\n])+)\$(?!\$)/;
+
+export const MathInline = Node.create<MathInlineOptions>({
+  name: 'mathInline',
+  group: 'inline',
+
+  inline: true,
+
   atom: true,
 
   addOptions() {
     return {
       onClick: () => {},
-      katexOptions: undefined,
+      katexOptions: { displayMode: false },
     };
   },
 
@@ -58,45 +68,44 @@ export const MathBlock = Node.create<MathBlockOptions>({
   parseHTML() {
     return [
       {
-        tag: 'div[data-type="math-block"]',
+        tag: 'span[data-type="math-inline"]',
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
     return [
-      'div',
-      mergeAttributes(HTMLAttributes, { 'data-type': 'math-block' }),
+      'span',
+      mergeAttributes(HTMLAttributes, { 'data-type': 'math-inline' }),
     ];
   },
 
-  parseMarkdown: (token, helpers) => {
-    return helpers.createNode('mathBlock', {
+  parseMarkdown(token, helpers) {
+    return helpers.createNode('mathInline', {
       latex: token.latex,
     });
   },
 
-  renderMarkdown: (node) => {
+  renderMarkdown(node) {
     const latex = node.attrs?.latex || '';
-
-    const output = ['$$', latex, '$$'];
-    return output.join('\n');
+    return `$${latex}$`;
   },
 
   markdownTokenizer: {
-    name: 'mathBlock',
-    level: 'block',
-    start: (str: string) => str.indexOf('$$'),
-    tokenize: (str: string) => {
-      const match = str.match(/^\$\$([^$]+)\$\$/);
-
+    name: 'mathInline',
+    level: 'inline',
+    start(src) {
+      return src.search(/(?<![\\$])\$(?!\$)/);
+    },
+    tokenize(src) {
+      const match = src.match(mathInlineMarkdownRegex);
       if (!match) {
         return undefined;
       }
       const [fullMatch, latex] = match;
 
       return {
-        type: 'mathBlock',
+        type: 'mathInline',
         raw: fullMatch,
         latex: latex?.trim() || '',
       };
@@ -105,21 +114,20 @@ export const MathBlock = Node.create<MathBlockOptions>({
 
   addCommands() {
     return {
-      insertBlockMath:
+      insertInlineMath:
         (options) =>
         ({ tr, commands }) => {
           const { latex, pos } = options;
           if (!latex) {
             return false;
           }
-          const insertPos = pos ?? tr.selection.from;
 
-          return commands.insertContentAt(insertPos, {
+          return commands.insertContentAt(pos ?? tr.selection.from, {
             type: this.name,
             attrs: { latex },
           });
         },
-      deleteBlockMath:
+      deleteInlineMath:
         (options) =>
         ({ tr, dispatch }) => {
           const pos = options?.pos ?? tr.selection.$from.pos;
@@ -133,26 +141,19 @@ export const MathBlock = Node.create<MathBlockOptions>({
           }
           return true;
         },
-      updateBlockMath:
+      updateInlineMath:
         (options) =>
         ({ tr, dispatch }) => {
-          const latex = options?.latex;
-          let pos = options?.pos;
-
-          if (pos === undefined) {
-            pos = tr.selection.$from.pos;
-          }
-
+          const pos = options?.pos ?? tr.selection.$from.pos;
           const node = tr.doc.nodeAt(pos);
 
           if (!node || node.type.name !== this.name) {
             return false;
           }
-
           if (dispatch) {
             tr.setNodeMarkup(pos, this.type, {
               ...node.attrs,
-              latex: latex ?? node.attrs.latex,
+              latex: options?.latex ?? node.attrs.latex,
             });
           }
           return true;
@@ -162,11 +163,8 @@ export const MathBlock = Node.create<MathBlockOptions>({
 
   addInputRules() {
     return [
-      // https://github.com/ueberdosis/tiptap/blob/main/packages/core/src/inputRules/nodeInputRule.ts#L51
-      // 上面是nodeInputRule源码 实现 offset 是 match[0].lastIndexOf(match[1])
-      // 如果要覆盖 $$..$$的话得让 offset 是 0
       nodeInputRule({
-        find: /^(\$\$([^$]+)\$\$)$/,
+        find: mathInlineInputRegex,
         type: this.type,
         getAttributes: (match) => ({
           latex: match[2]?.trim() || '',
@@ -174,32 +172,38 @@ export const MathBlock = Node.create<MathBlockOptions>({
       }),
     ];
   },
+
+  addPasteRules() {
+    return [];
+  },
+
   addNodeView() {
     const { katexOptions } = this.options;
+
     return ({ node, getPos }) => {
-      const wrapper = document.createElement('div');
-      const innerWrapper = document.createElement('div');
+      const wrapper = document.createElement('span');
+      const innerWrapper = document.createElement('span');
 
-      wrapper.className = 'math-block-wrapper';
-
+      wrapper.className = 'math-inline-wrapper';
       if (this.editor.isEditable) {
-        wrapper.classList.add('math-block-editable');
+        wrapper.classList.add('math-inline-editable');
       }
 
-      innerWrapper.className = 'math-block-inner-wrapper';
-      wrapper.dataset.type = 'block-math';
+      wrapper.dataset.type = 'math-inline';
       wrapper.setAttribute('data-latex', node.attrs.latex);
+      wrapper.contentEditable = 'false';
+      innerWrapper.className = 'math-inline-inner-wrapper';
       wrapper.appendChild(innerWrapper);
 
-      function renderMath() {
-        try {
-          render(node.attrs.latex, innerWrapper, katexOptions);
-          wrapper.classList.remove('math-block-error');
-        } catch {
-          console.error('Failed to render math block:', node.attrs.latex);
-          wrapper.textContent = node.attrs.latex;
-          wrapper.classList.add('math-block-error');
-        }
+      try {
+        render(node.attrs.latex, innerWrapper, {
+          ...katexOptions,
+          displayMode: false,
+        });
+      } catch {
+        console.error('Failed to render inline math:', node.attrs.latex);
+        innerWrapper.textContent = node.attrs.latex;
+        wrapper.classList.add('math-inline-error');
       }
 
       const handleClick = (event: MouseEvent) => {
@@ -207,19 +211,16 @@ export const MathBlock = Node.create<MathBlockOptions>({
         event.stopPropagation();
 
         const pos = getPos();
-
         if (pos === undefined) {
           return;
         }
-
-        if (this.options.onClick) {
-          this.options.onClick(node, pos);
-        }
+        this.options.onClick?.(node, pos);
       };
+
       if (this.options.onClick) {
         wrapper.addEventListener('click', handleClick);
       }
-      renderMath();
+
       return {
         dom: wrapper,
         destroy() {
