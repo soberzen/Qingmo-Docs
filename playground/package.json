@@ -11,9 +11,13 @@
     "shadcn:add": "pnpm --filter @qingmo/shadcn exec shadcn add --cwd ../../playground"
   },
   "dependencies": {
+    "@qingmo/core": "workspace:*",
     "@qingmo/editor-ui": "workspace:*",
     "@qingmo/react": "workspace:*",
     "@qingmo/shadcn": "workspace:*",
+    "@tiptap/core": "^3.30.5",
+    "@tiptap/pm": "^3.30.5",
+    "katex": "^0.19.0",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

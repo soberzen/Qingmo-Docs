@@ -1,5 +1,4 @@
 import { CodeBlockFrame } from '@qingmo/editor-ui';
-import { EditorFrame } from '@qingmo/react';
 import { Button } from '@qingmo/shadcn/components/button';
 import { Input } from '@qingmo/shadcn/components/input';
 import { Label } from '@qingmo/shadcn/components/label';
@@ -10,6 +9,7 @@ import { showToast } from '@qingmo/shadcn/lib/toast';
 import { useState } from 'react';
 
 import { ImageBlockDemo } from './components/image-block-demo';
+import { MathBlockDemo } from './components/math-block-demo';
 
 function App() {
   const [message, setMessage] = useState('共享组件已接入 playground');
@@ -39,21 +39,12 @@ function App() {
               id='editor-heading'
               className='text-lg font-semibold'
             >
-              编辑器预览
+              数学公式测试
             </h2>
             <p className='mt-2 text-sm leading-6 text-muted-foreground'>
-              @qingmo/react 负责适配与组装，界面组件由 @qingmo/editor-ui 实现。
+              测试 MathBlock 的公式渲染、节点命令和输入规则。
             </p>
-            <EditorFrame
-              className='mt-6'
-              toolbar={
-                <span className='text-sm font-medium'>编辑器操作栏</span>
-              }
-            >
-              <div className='flex min-h-40 items-center justify-center rounded-lg border border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground'>
-                后续在此接入编辑器内容与节点渲染组件
-              </div>
-            </EditorFrame>
+            <MathBlockDemo />
           </section>
 
           <section

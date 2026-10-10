@@ -16,3 +16,146 @@
     min-height: 100svh;
   }
 }
+
+.math-block-demo {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.math-block-demo .math-block-demo-description,
+.math-block-demo .math-block-demo-hint {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.math-block-demo .math-block-demo-input-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.math-block-demo .math-block-demo-input-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.math-block-demo textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.875rem;
+}
+
+.math-block-demo textarea:focus-visible,
+.math-block-demo summary:focus-visible,
+.math-block-demo .math-block-demo-editor:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.math-block-demo textarea:disabled {
+  opacity: 0.6;
+}
+
+.math-block-demo .math-block-demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.math-block-demo .math-block-demo-host {
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: var(--background);
+}
+
+.math-block-demo .math-block-demo-host[data-readonly='true'] {
+  background: var(--muted);
+}
+
+.math-block-demo .math-block-demo-editor {
+  min-height: 17rem;
+  padding: 1rem 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.math-block-demo .math-block-demo-editor p {
+  min-height: 1.5rem;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+  line-height: 1.75;
+}
+
+.math-block-demo .math-block-wrapper {
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--card);
+  overflow-x: auto;
+}
+
+.math-block-demo .math-block-editable {
+  cursor: pointer;
+}
+
+.math-block-demo .math-block-wrapper.ProseMirror-selectednode {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.math-block-demo .math-block-wrapper .katex-display {
+  margin: 0.25rem 0;
+}
+
+.math-block-demo .math-block-error {
+  border-color: var(--destructive);
+  color: var(--destructive);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  white-space: pre-wrap;
+}
+
+.math-block-demo .math-block-demo-status {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.math-block-demo .math-block-demo-status span {
+  color: var(--muted-foreground);
+}
+
+.math-block-demo .math-block-demo-details {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.math-block-demo .math-block-demo-details summary {
+  cursor: pointer;
+}
+
+.math-block-demo .math-block-demo-details pre {
+  max-height: 20rem;
+  overflow: auto;
+  margin-top: 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.math-block-demo .math-block-demo-details[data-error='true'] {
+  border-color: var(--destructive);
+  color: var(--destructive);
+}
