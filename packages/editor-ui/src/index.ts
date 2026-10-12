@@ -8,3 +8,8 @@ export {
   type ImageBlockFrameProps,
   type ImageBlockSize,
 } from './components/image-block';
+export {
+  SlashCommandMenu,
+  type SlashCommandMenuHandle,
+  type SlashCommandMenuProps,
+} from './components/slash-command-menu';

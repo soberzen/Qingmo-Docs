@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 import { ImageBlockDemo } from './components/image-block-demo';
 import { MathBlockDemo } from './components/math-block-demo';
+import { SlashCommandDemo } from './components/slash-command-demo';
 
 function App() {
   const [message, setMessage] = useState('共享组件已接入 playground');
@@ -30,6 +31,19 @@ function App() {
               编辑器界面与共享 UI 的独立调试环境。
             </p>
           </header>
+
+          <section
+            aria-labelledby='slash-command-heading'
+            className='rounded-xl border bg-card p-6 text-card-foreground'
+          >
+            <h2
+              id='slash-command-heading'
+              className='text-lg font-semibold'
+            >
+              Slash Command 测试
+            </h2>
+            <SlashCommandDemo />
+          </section>
 
           <section
             aria-labelledby='editor-heading'

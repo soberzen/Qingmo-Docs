@@ -5,3 +5,13 @@ export {
   type ImageBlockFrameProps,
   type ImageBlockSize,
 } from '@qingmo/editor-ui';
+export {
+  SlashCommandMenu,
+  type SlashCommandMenuHandle,
+  type SlashCommandMenuProps,
+} from '@qingmo/editor-ui';
+export {
+  createSlashCommandRenderer,
+  type SlashCommandComponentProps,
+  type SlashCommandHandle,
+} from './extensions/slash-command';

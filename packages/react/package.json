@@ -31,8 +31,11 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.8.0",
     "@qingmo/core": "workspace:*",
     "@qingmo/editor-ui": "workspace:*",
+    "@tiptap/core": "^3.31.4",
+    "@tiptap/react": "^3.31.4",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

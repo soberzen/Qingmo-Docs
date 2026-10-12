@@ -17,6 +17,77 @@
   }
 }
 
+.slash-command-demo {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.slash-command-demo-host {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--background);
+}
+
+.slash-command-demo-host[data-readonly='true'] {
+  background: var(--muted);
+}
+
+.slash-command-demo-editor {
+  min-height: 11rem;
+  padding: 1rem 1.25rem;
+  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+  line-height: 1.75;
+}
+
+.slash-command-demo-editor:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.slash-command-demo-editor p {
+  min-height: 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.slash-command-demo-editor pre {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.slash-command-demo-editor .math-block-wrapper {
+  margin: 0.75rem 0;
+  overflow-x: auto;
+}
+
+.slash-command-demo-editor .suggestion {
+  color: var(--primary);
+}
+
+.slash-command-demo details {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.slash-command-demo summary {
+  cursor: pointer;
+}
+
+.slash-command-demo details pre {
+  max-height: 20rem;
+  overflow: auto;
+  margin-top: 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+}
+
 .math-block-demo {
   display: grid;
   gap: 1rem;

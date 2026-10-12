@@ -24,6 +24,34 @@ playground 启动前会通过 Turbo 构建 React 包及其依赖，因为 React 
 布局组件，并保留图片块、共享基础组件和通知示例。数学公式区域直接初始化 Tiptap
 Editor，加载 core 中的 `MathBlock` 和 `MathInline`，用于测试节点实现。
 
+## Slash Command 测试
+
+测试组件位于 `src/components/slash-command-demo.tsx`。编辑器加载 core 的
+`SlashCommand`，通过 React 包的 `createSlashCommandRenderer` 渲染共享
+`SlashCommandMenu`。示例使用 `useEditor` 和
+`EditorContent`，后者提供 ReactRenderer 所需的 portal 容器。
+
+1. 在空白段落开头输入 `/`，或点击“打开命令菜单”，查看基础内容与数学公式分组。
+2. 输入 `/代码`、`/co`、`/for`、`/INLINE` 或
+   `/math-block`，检查中文显示名称、部分别名和命令名称筛选。core 对
+   `name`、`label` 和 `aliases` 都做包含匹配，忽略大小写与首尾空格；输入
+   `/不存在` 检查空状态。
+3. 使用 ↑ /
+   ↓ 切换命令、Enter 执行，或直接点击命令。检查插入的段落、代码块、块公式和行内公式，以及文档 JSON 中是否已移除斜杠和搜索词。
+4. 输入 `/` 后按 Esc 关闭菜单。在正文中间输入 `/` 不触发菜单，因为 core 配置了
+   `startOfLine: true`。
+5. 插入代码块后，在空代码块开头输入 `/`。此时仅显示“文本段落”，用于检查
+   `shouldHidden`；选择它可以回到正文。
+6. 点击“切换只读”检查编辑器与打开菜单按钮，再点击“重置示例”恢复初始内容。
+
+新增示例命令时修改 `groups`，为命令提供 `name`、`label`、`description`、可选
+`aliases` 和 `action(editor)`。editor-ui 的 `SlashCommandMenu`
+内部维护选中项，负责鼠标悬停、上下键选择和 Enter 确认；筛选结果变化时从首项开始。组件通过
+`SlashCommandMenuHandle.onKeyDown(event)`
+暴露按键入口，playground 适配层只转发 Suggestion 的按键事件，并把 `editor`
+和分组传给菜单。菜单选中命令后直接调用
+`action(editor)`；core 为返回的命令包装 action，先清除当前 Suggestion 范围内的斜杠和搜索词，再执行原始 action 并恢复编辑器焦点。位置与挂载由 core 的 Suggestion 管理。
+
 ## MathBlock 测试
 
 测试组件位于 `src/components/math-block-demo.tsx`，KaTeX 样式在 `src/main.tsx`
