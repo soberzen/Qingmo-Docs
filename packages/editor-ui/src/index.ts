@@ -15,3 +15,10 @@ export {
   type SlashCommandMenuHandle,
   type SlashCommandMenuProps,
 } from './components/slash-command-menu';
+export {
+  MentionCommandMenu,
+  type MentionCommandItem,
+  type MentionCommandSearch,
+  type MentionCommandMenuHandle,
+  type MentionCommandMenuProps,
+} from './components/mention-command-menu';

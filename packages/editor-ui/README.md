@@ -37,8 +37,8 @@ primitives in shadcn rather than copying them into this package.
 
 `ImageBlockFrame` loads its image when the frame first intersects the viewport,
 including inside a scrollable editor. It reserves space using `aspectRatio`
-(16:9 by default) and switches to the image's intrinsic ratio after loading.
-Use `loading="eager"` for images that should load immediately.
+(16:9 by default) and switches to the image's intrinsic ratio after loading. Use
+`loading="eager"` for images that should load immediately.
 
 ```tsx
 import { ImageBlockFrame } from '@qingmo/editor-ui';
@@ -62,10 +62,32 @@ drag finishes or a keyboard resize commits, rather than on every pointer move.
 `resizable={false}` provides a read-only image.
 
 Resource failures show a retry button. Retrying remounts the image with its
-original URL, preserving signed URL parameters. `onRetry` can return a fresh
-URL synchronously or asynchronously when authentication has expired. A rejected
+original URL, preserving signed URL parameters. `onRetry` can return a fresh URL
+synchronously or asynchronously when authentication has expired. A rejected
 retry callback leaves the failure card available. A local React error boundary
 also isolates rendering errors and can remount the component from its fallback.
+
+## Mention search
+
+`MentionCommandMenu` owns its search input independently of the editor's
+Suggestion query. Provide `searchItems(searchText, { signal })` to return users
+or articles synchronously or asynchronously, `onSelect(item)` to insert the
+chosen mention, and `onClose()` to dismiss the menu. Each item has an `id` and
+`label`, with optional `description`, `kind: 'user' | 'article'`, and `icon`.
+
+The menu immediately requests recommendations with an empty search term. Other
+searches wait 200 ms by default; set `debounceMs` to change the delay. New input
+cancels the previous request and hides its results, and late responses cannot
+replace the current list. Pass the supplied signal to your request client to
+cancel work as well. Loading, empty, and failed searches offer a retry action.
+
+The input focuses after the menu mounts. Arrow keys cycle through results, Enter
+selects, and Escape closes; these shortcuts are ignored during IME composition.
+A `MentionCommandMenuHandle` ref exposes `onKeyDown(event)` for editor keyboard
+forwarding. It returns whether the menu handled the key. Keep `searchItems`
+stable across unrelated parent renders to avoid restarting its request. The host
+renderer positions the menu beside the `@` trigger and restores editor focus
+when inserting or dismissing.
 
 ## Styles
 
