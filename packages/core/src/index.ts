@@ -15,6 +15,13 @@ export type {
   SlashCommandGroup,
   SlashCommandSuggestionProps,
 } from './extensions/slash-command/types';
+export {
+  Mention,
+  mentionPluginKey,
+  type MentionItem,
+  type MentionOptions,
+  type MentionProps,
+} from './nodes/mention';
 export type { SupportedLanguageConfig } from './utils/supportedLanguages';
 export { defaultSupportedLanguages } from './utils/supportedLanguages';
 import './style/index.css';
