@@ -71,18 +71,18 @@ export function CodeBlockFrame({
   const icon =
     copyState === 'loading' ? (
       <Loader2
-        size={16}
-        className='animate-spin text-gray-500'
+        aria-hidden='true'
+        className='size-3.5 animate-spin'
       />
     ) : copyState === 'copied' ? (
       <Check
-        size={16}
-        className='text-gray-500'
+        aria-hidden='true'
+        className='size-3.5'
       />
     ) : (
       <Copy
-        size={16}
-        className='text-gray-500'
+        aria-hidden='true'
+        className='size-3.5'
       />
     );
 
@@ -92,7 +92,7 @@ export function CodeBlockFrame({
     <pre
       data-slot='code-block'
       className={cn(
-        'flex min-h-30 max-h-100 flex-col overflow-x-auto rounded-lg border bg-background text-foreground',
+        'group/code-block flex max-h-100 min-w-0 max-w-full flex-col overflow-hidden rounded-xl border border-border/70 bg-muted/50 text-foreground shadow-xs dark:bg-muted/20',
         className,
       )}
       {...props}
@@ -100,7 +100,7 @@ export function CodeBlockFrame({
       <div
         data-slot='code-toolbar'
         contentEditable={false}
-        className='flex flex-wrap justify-between items-center gap-2 border-b bg-muted/30 px-4 py-3'
+        className='flex shrink-0 items-center justify-between gap-3 border-b border-border/50 px-3 py-2 font-sans whitespace-normal'
       >
         <Popover
           open={languageMenuOpen}
@@ -113,22 +113,23 @@ export function CodeBlockFrame({
               size='sm'
               aria-label={`选择代码语言，当前为 ${languageLabel}`}
               disabled={!onLanguageChange || supportedLanguages.length === 0}
-              className='gap-2 font-normal'
+              className='h-7 min-w-0 shrink gap-1.5 rounded-md border-border/60 bg-background/80 px-2 text-xs font-medium text-muted-foreground hover:border-border hover:bg-background hover:text-foreground aria-expanded:border-border aria-expanded:bg-background aria-expanded:text-foreground'
             >
               <CodeXml
                 aria-hidden='true'
-                className='text-muted-foreground'
+                className='size-3.5'
               />
-              <span>{languageLabel}</span>
+              <span className='truncate'>{languageLabel}</span>
               <ChevronDown
                 aria-hidden='true'
-                className='text-muted-foreground'
+                className='size-3 opacity-60 transition-transform duration-150 group-aria-expanded/button:rotate-180'
               />
             </Button>
           </PopoverTrigger>
           <PopoverContent
             align='start'
-            className='w-64 p-0'
+            className='w-64 overflow-hidden rounded-xl p-0 font-sans shadow-lg shadow-black/5'
+            sideOffset={8}
             contentEditable={false}
             aria-label='选择代码语言'
           >
@@ -167,16 +168,27 @@ export function CodeBlockFrame({
             </Command>
           </PopoverContent>
         </Popover>
-        <div className='flex items-center gap-2'>
+        <div className='shrink-0'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
+                type='button'
+                variant='ghost'
+                size='sm'
                 onClick={handleCopy}
-                className='inline-flex items-center justify-center rounded p-1 transition-colors hover:bg-gray-200/60 hover:text-gray-800 dark:hover:bg-gray-700/60'
+                disabled={copyState === 'loading'}
+                className={cn(
+                  'h-7 gap-1.5 rounded-md border-border/60 bg-background/80 px-2 text-xs font-medium text-muted-foreground hover:border-border hover:bg-background hover:text-foreground',
+                  copyState === 'copied' &&
+                    'border-emerald-500/20 bg-emerald-500/10 text-emerald-600 hover:border-emerald-500/20 hover:bg-emerald-500/10 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-400',
+                )}
                 aria-label={tooltipText}
               >
                 {icon}
-              </button>
+                <span className='hidden sm:inline'>
+                  {copyState === 'copied' ? '已复制' : '复制'}
+                </span>
+              </Button>
             </TooltipTrigger>
             <TooltipContent>
               <span>{tooltipText}</span>
@@ -186,7 +198,7 @@ export function CodeBlockFrame({
       </div>
       <div
         data-slot='code-body'
-        className='min-h-0 flex-1 p-4'
+        className='min-h-0 min-w-0 flex-1 overflow-auto px-5 py-4 font-mono text-sm leading-6 whitespace-pre [tab-size:2]'
       >
         {children}
       </div>
