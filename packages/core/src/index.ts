@@ -14,4 +14,6 @@ export type {
   SlashCommandGroup,
   SlashCommandSuggestionProps,
 } from './extensions/slash-command/types';
+export type { SupportedLanguageConfig } from './utils/supportedLanguages';
+export { defaultSupportedLanguages } from './utils/supportedLanguages';
 import './style/index.css';

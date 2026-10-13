@@ -6,7 +6,7 @@ export type SupportedLanguageConfig = {
   match: string[]; //匹配规则
 };
 
-const defaultSupportedLanguages: SupportedLanguageConfig[] = [
+export const defaultSupportedLanguages: SupportedLanguageConfig[] = [
   {
     id: 'text',
     name: 'Plain Text',

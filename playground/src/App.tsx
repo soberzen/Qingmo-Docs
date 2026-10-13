@@ -1,3 +1,4 @@
+import type { SupportedLanguageConfig } from '@qingmo/core';
 import { CodeBlockFrame } from '@qingmo/editor-ui';
 import { Button } from '@qingmo/shadcn/components/button';
 import { Input } from '@qingmo/shadcn/components/input';
@@ -12,9 +13,21 @@ import { ImageBlockDemo } from './components/image-block-demo';
 import { MathBlockDemo } from './components/math-block-demo';
 import { SlashCommandDemo } from './components/slash-command-demo';
 
+const codeBlockLanguages: SupportedLanguageConfig[] = [
+  { id: 'text', name: 'Plain Text', match: ['text', 'txt', 'plain'] },
+  { id: 'javascript', name: 'JavaScript', match: ['javascript', 'js'] },
+  { id: 'jsx', name: 'JSX', match: ['jsx'] },
+  { id: 'typescript', name: 'TypeScript', match: ['typescript', 'ts'] },
+  { id: 'tsx', name: 'TSX', match: ['tsx'] },
+  { id: 'python', name: 'Python', match: ['python', 'py'] },
+  { id: 'json', name: 'JSON', match: ['json'] },
+  { id: 'css', name: 'CSS', match: ['css'] },
+];
+
 function App() {
   const [message, setMessage] = useState('共享组件已接入 playground');
   const [count, setCount] = useState(0);
+  const [codeLanguage, setCodeLanguage] = useState('jsx');
 
   return (
     <>
@@ -90,8 +103,18 @@ function App() {
             <Separator className='my-6' />
             <CodeBlockFrame
               className='mt-6'
-              language='jsx'
-            />
+              language={codeLanguage}
+              supportedLanguages={codeBlockLanguages}
+              onLanguageChange={setCodeLanguage}
+            >
+              <code>{"const message = 'Hello, Qingmo!';"}</code>
+            </CodeBlockFrame>
+            <p
+              aria-live='polite'
+              className='my-3 text-sm text-muted-foreground'
+            >
+              当前语言 ID：{codeLanguage}。点击语言名称，搜索并选择代码语言。
+            </p>
             <form
               className='space-y-3'
               onSubmit={(event) => {

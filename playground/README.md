@@ -57,6 +57,15 @@ Editor，加载 core 中的 `MathBlock` 和 `MathInline`，用于测试节点实
 和分组传给菜单。菜单选中命令后直接调用
 `action(editor)`；core 为返回的命令包装 action，先清除当前 Suggestion 范围内的斜杠和搜索词，再执行原始 action 并恢复编辑器焦点。位置与挂载由 core 的 Suggestion 管理。
 
+## 代码块语言选择测试
+
+共享组件区域的 `CodeBlockFrame` 使用 `App.tsx` 中的 `codeLanguage`
+state作为当前语言，`supportedLanguages` 提供 `{ id, name, match }` 配置，
+`onLanguageChange`
+更新 state。点击工具栏中的语言名称可打开搜索菜单，按显示名称、语言 ID 或别名搜索，例如
+`JavaScript`、`ts`、`py`；选择后检查工具栏名称、选中标记和下方当前语言 ID。也可使用 ↑
+/ ↓ 和 Enter 选择，按 Esc 关闭。
+
 ## MathBlock 测试
 
 测试组件位于 `src/components/math-block-demo.tsx`，KaTeX 样式在 `src/main.tsx`
