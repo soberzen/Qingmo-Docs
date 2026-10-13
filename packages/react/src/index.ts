@@ -21,3 +21,15 @@ export {
   type SlashCommandComponentProps,
   type SlashCommandHandle,
 } from './extensions/slash-command';
+export {
+  MentionCommandMenu,
+  type MentionCommandItem,
+  type MentionCommandSearch,
+  type MentionCommandMenuProps,
+  type MentionCommandMenuHandle,
+} from '@qingmo/editor-ui';
+export {
+  createMentionCommandRenderer,
+  type MentionCommandComponentProps,
+  type MentionCommandHandle,
+} from './extensions/mention-command';

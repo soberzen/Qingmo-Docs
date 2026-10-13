@@ -32,6 +32,27 @@ toolbar only appears in the editor and is not included in document JSON or
 exported HTML. Other React node views can follow the same extension-and-adapter
 pattern.
 
+## Mention menus
+
+`createMentionCommandRenderer(Component)` adapts core's `Mention.render` to a
+React component. `MentionCommandComponentProps` includes the suggestion range,
+`command`, a stable `onClose` callback, and a ref to `MentionCommandHandle`. The
+renderer creates the React portal, passes updated suggestion props, forwards
+editor keyboard events, and uses `props.mount` for positioning and cleanup.
+
+Use editor-ui's `MentionCommandMenu` through this package's public export. The
+menu owns its input and remote search; suggestion `query` and `items` do not
+provide those search results. Pass the menu's selected item to `props.command`
+and bridge `MentionCommandHandle.onKeyDown({ event })` to
+`MentionCommandMenuHandle.onKeyDown(event)`.
+
+Closing the menu or pressing Escape dismisses core's Mention suggestion and
+returns focus with `editor.view.focus()`. The renderer creates and mounts the
+component in `onStart`, updates its props in `onUpdate`, and cleans it up in
+`onExit`. A menu input should focus after mounting, such as in a cancellable
+animation frame from its effect. Exiting an open menu removes both its
+positioning listeners and React portal.
+
 ## Imports and styles
 
 Applications consume the public React entry:
