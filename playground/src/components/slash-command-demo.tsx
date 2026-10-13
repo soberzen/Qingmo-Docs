@@ -4,6 +4,7 @@ import {
   MathBlock,
   MathInline,
   Paragraph,
+  Placeholder,
   SlashCommand,
   Text,
 } from '@qingmo/core';
@@ -164,6 +165,12 @@ export function SlashCommandDemo() {
         CodeHighlight,
         MathBlock,
         MathInline,
+        Placeholder.configure({
+          placeholder: ({ node }) =>
+            node.type.name === 'paragraph'
+              ? '输入内容，或输入 / 打开命令菜单…'
+              : '',
+        }),
         SlashCommand.configure({
           groups,
           render: createSlashCommandRenderer(DemoSlashCommandMenu),
@@ -217,6 +224,7 @@ export function SlashCommandDemo() {
         在段落开头输入 / 打开菜单，继续输入中文名称或英文别名筛选。 使用 ↑ / ↓
         选择、Enter 执行、Esc 关闭，也可以点击命令。
         示例代码可直接编辑，点击语言名称可搜索并切换语言。
+        点击空白段落可看到占位提示，输入文字后提示自动隐藏。
       </p>
       <div className='flex flex-wrap gap-2'>
         <Button
@@ -235,6 +243,15 @@ export function SlashCommandDemo() {
           onClick={toggleReadOnly}
         >
           {readOnly ? '恢复编辑' : '切换只读'}
+        </Button>
+        <Button
+          type='button'
+          size='sm'
+          variant='outline'
+          disabled={!editor || readOnly}
+          onClick={() => editor?.chain().clearContent().focus().run()}
+        >
+          清空内容
         </Button>
         <Button
           type='button'

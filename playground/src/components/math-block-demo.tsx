@@ -1,4 +1,11 @@
-import { Document, MathBlock, MathInline, Paragraph, Text } from '@qingmo/core';
+import {
+  Document,
+  MathBlock,
+  MathInline,
+  Paragraph,
+  Placeholder,
+  Text,
+} from '@qingmo/core';
 import { EditorFrame } from '@qingmo/react';
 import { Button } from '@qingmo/shadcn/components/button';
 import { Editor, mergeAttributes, type JSONContent } from '@tiptap/core';
@@ -108,6 +115,12 @@ export function MathBlockDemo() {
         Document,
         DemoParagraph,
         Text,
+        Placeholder.configure({
+          placeholder: ({ node }) =>
+            node.type.name === 'paragraph'
+              ? '输入正文，或输入 $a+b$ / $$a+b$$ 插入公式…'
+              : '',
+        }),
         MathBlock.configure({
           katexOptions: { displayMode: true, throwOnError: true },
           onClick: onMathClick,

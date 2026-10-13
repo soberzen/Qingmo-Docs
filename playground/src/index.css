@@ -51,6 +51,16 @@
   margin: 0.75rem 0;
 }
 
+.slash-command-demo-editor p.is-empty[data-placeholder]::before,
+.math-block-demo-editor p.is-empty[data-placeholder]::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--muted-foreground);
+  pointer-events: none;
+  user-select: none;
+}
+
 .slash-command-demo-editor pre:not([data-slot='code-block']) {
   overflow-x: auto;
   border-radius: 0.5rem;

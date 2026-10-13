@@ -62,6 +62,21 @@ Editor，加载 core 中的 `MathBlock` 和 `MathInline`，用于测试节点实
 和分组传给菜单。菜单选中命令后直接调用
 `action(editor)`；core 为返回的命令包装 action，先清除当前 Suggestion 范围内的斜杠和搜索词，再执行原始 action 并恢复编辑器焦点。位置与挂载由 core 的 Suggestion 管理。
 
+## Placeholder 测试
+
+斜杠命令和数学公式编辑器都加载 core 导出的 `Placeholder`。通过
+`placeholder({ node })` 为段落提供不同提示，其他节点返回空字符串。保持默认的
+`showOnlyCurrent: true` 和
+`showOnlyWhenEditable: true`：只在当前空段落显示占位文字，切换只读时隐藏。
+
+占位样式位于 `src/index.css`，使用 `p.is-empty[data-placeholder]::before` 和
+`content: attr(data-placeholder)` 显示提示。
+
+1. 点击编辑器中的空段落，查看占位提示；输入文字后提示消失，删除文字后恢复。
+2. 点击斜杠命令区域的“清空内容”，查看整篇文档为空时的提示；点击“重置示例”恢复内容。
+3. 切换只读，检查占位提示隐藏；恢复编辑后再次显示。
+4. 展开当前文档 JSON，确认占位文字没有写入正文。
+
 ## 代码块语言选择测试
 
 共享组件区域的 `CodeBlockFrame` 使用 `App.tsx` 中的 `codeLanguage`

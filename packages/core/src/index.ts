@@ -2,6 +2,7 @@ export { Document } from './basic-node/document';
 export { Paragraph } from './basic-node/paragraph';
 export { Text } from './basic-node/text';
 export { CodeHighlight } from './extensions/code-highlight/code-highlight';
+export { Placeholder, type PlaceholderOptions } from './extensions/placeholder';
 export { CodeBlock } from './nodes/code-block';
 export { MathBlock, type MathBlockOptions } from './nodes/math-block';
 export { MathInline, type MathInlineOptions } from './nodes/math-inline';
