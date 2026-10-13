@@ -6,18 +6,19 @@ import {
   Paragraph,
   SlashCommand,
   Text,
-  type SlashCommandGroup,
 } from '@qingmo/core';
 import {
   createSlashCommandRenderer,
   EditorFrame,
   SlashCommandMenu,
   type SlashCommandComponentProps,
+  type SlashCommandMenuGroup,
   type SlashCommandMenuHandle,
 } from '@qingmo/react';
 import { Button } from '@qingmo/shadcn/components/button';
 import { mergeAttributes, type JSONContent } from '@tiptap/core';
 import { EditorContent, useEditor } from '@tiptap/react';
+import { Braces, CodeXml, Sigma, Type } from 'lucide-react';
 import { useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 // Keep the same local paragraph adjustment as the math demo so text is rendered.
@@ -74,7 +75,7 @@ export function SlashCommandDemo() {
   const [json, setJson] = useState(() =>
     JSON.stringify(createInitialContent(), null, 2),
   );
-  const groups = useMemo<SlashCommandGroup[]>(
+  const groups = useMemo<SlashCommandMenuGroup[]>(
     () => [
       {
         name: 'basic',
@@ -83,6 +84,7 @@ export function SlashCommandDemo() {
           {
             name: 'paragraph',
             label: '文本段落',
+            icon: <Type />,
             description: '插入一段可继续编辑的正文',
             aliases: ['text', 'paragraph', 'p'],
             action: (editor) => {
@@ -97,6 +99,7 @@ export function SlashCommandDemo() {
           {
             name: 'code-block',
             label: '代码块',
+            icon: <CodeXml />,
             description: '插入可继续输入的 JavaScript 代码块',
             aliases: ['code', 'javascript', 'js'],
             shouldHidden: (editor) => editor.isActive('codeBlock'),
@@ -114,6 +117,7 @@ export function SlashCommandDemo() {
           {
             name: 'math-block',
             label: '块公式',
+            icon: <Sigma />,
             description: '插入独立成块的 LaTeX 公式',
             aliases: ['math', 'formula', 'latex'],
             shouldHidden: (editor) => editor.isActive('codeBlock'),
@@ -125,6 +129,7 @@ export function SlashCommandDemo() {
           {
             name: 'math-inline',
             label: '行内公式',
+            icon: <Braces />,
             description: '在当前段落插入 LaTeX 公式',
             aliases: ['inline', 'inline math'],
             shouldHidden: (editor) => editor.isActive('codeBlock'),

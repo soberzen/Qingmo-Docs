@@ -20,6 +20,7 @@
     "@tiptap/pm": "^3.31.4",
     "@tiptap/react": "^3.31.4",
     "katex": "^0.19.0",
+    "lucide-react": "^1.33.0",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

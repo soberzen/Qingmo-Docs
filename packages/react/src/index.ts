@@ -7,6 +7,8 @@ export {
 } from '@qingmo/editor-ui';
 export {
   SlashCommandMenu,
+  type SlashCommandMenuCommand,
+  type SlashCommandMenuGroup,
   type SlashCommandMenuHandle,
   type SlashCommandMenuProps,
 } from '@qingmo/editor-ui';

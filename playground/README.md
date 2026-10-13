@@ -44,8 +44,13 @@ Editor，加载 core 中的 `MathBlock` 和 `MathInline`，用于测试节点实
    `shouldHidden`；选择它可以回到正文。
 6. 点击“切换只读”检查编辑器与打开菜单按钮，再点击“重置示例”恢复初始内容。
 
-新增示例命令时修改 `groups`，为命令提供 `name`、`label`、`description`、可选
-`aliases` 和 `action(editor)`。editor-ui 的 `SlashCommandMenu`
+新增示例命令时修改 `groups`，使用 React 包导出的 `SlashCommandMenuGroup[]`
+类型，为命令提供 `name`、`label`、`description`、可选 `aliases`、可选 `icon` 和
+`action(editor)`。`icon` 接受 `ReactNode`，例如
+`<CodeXml />`；不提供时保留原有文字布局。 `SlashCommandMenuCommand` 和
+`SlashCommandMenuGroup` 由 editor-ui 定义，并通过 `@qingmo/react`
+导出；图标只属于菜单展示，core 的命令类型不依赖 React。editor-ui 的
+`SlashCommandMenu`
 内部维护选中项，负责鼠标悬停、上下键选择和 Enter 确认；筛选结果变化时从首项开始。组件通过
 `SlashCommandMenuHandle.onKeyDown(event)`
 暴露按键入口，playground 适配层只转发 Suggestion 的按键事件，并把 `editor`

@@ -1,4 +1,5 @@
 import type {
+  Command,
   SlashCommandGroup,
   SlashCommandSuggestionProps,
 } from '@qingmo/core';
@@ -9,8 +10,17 @@ import {
   useImperativeHandle,
   useRef,
   useState,
+  type ReactNode,
   type RefAttributes,
 } from 'react';
+
+export type SlashCommandMenuCommand = Command & {
+  icon?: ReactNode;
+};
+
+export type SlashCommandMenuGroup = Omit<SlashCommandGroup, 'commands'> & {
+  commands: SlashCommandMenuCommand[];
+};
 
 export type SlashCommandMenuHandle = {
   onKeyDown: (event: KeyboardEvent) => boolean;
@@ -18,7 +28,7 @@ export type SlashCommandMenuHandle = {
 
 export type SlashCommandMenuProps = {
   editor: SlashCommandSuggestionProps['editor'];
-  groups: SlashCommandGroup[];
+  groups: SlashCommandMenuGroup[];
 } & RefAttributes<SlashCommandMenuHandle>;
 
 export function SlashCommandMenu({
@@ -117,18 +127,28 @@ export function SlashCommandMenu({
                       aria-selected={selected}
                       tabIndex={-1}
                       className={cn(
-                        'flex w-full flex-col gap-0.5 rounded-md px-2.5 py-2 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                        'flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
                         selected && 'bg-accent text-accent-foreground',
                       )}
                       onMouseEnter={() => selectIndex(index)}
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={() => command.action(editor)}
                     >
-                      <span className='text-sm font-medium'>
-                        {command.label}
-                      </span>
-                      <span className='text-xs leading-5 text-muted-foreground'>
-                        {command.description}
+                      {command.icon != null && (
+                        <span
+                          aria-hidden='true'
+                          className='flex size-9 shrink-0 items-center justify-center rounded-md border bg-background text-muted-foreground [&_svg]:size-4 [&_svg]:shrink-0'
+                        >
+                          {command.icon}
+                        </span>
+                      )}
+                      <span className='flex min-w-0 flex-1 flex-col gap-0.5'>
+                        <span className='text-sm font-medium'>
+                          {command.label}
+                        </span>
+                        <span className='text-xs leading-5 text-muted-foreground'>
+                          {command.description}
+                        </span>
                       </span>
                     </button>
                   );

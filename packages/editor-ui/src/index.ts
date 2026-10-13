@@ -10,6 +10,8 @@ export {
 } from './components/image-block';
 export {
   SlashCommandMenu,
+  type SlashCommandMenuCommand,
+  type SlashCommandMenuGroup,
   type SlashCommandMenuHandle,
   type SlashCommandMenuProps,
 } from './components/slash-command-menu';
