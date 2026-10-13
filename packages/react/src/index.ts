@@ -1,4 +1,8 @@
-// Editor view implementations live in editor-ui; this is their public entry.
+export { CodeBlock } from './nodes/code-block/code-block';
+export {
+  renderNodeView,
+  type RenderNodeViewProps,
+} from './utils/renderNodeView';
 export { EditorFrame, type EditorFrameProps } from '@qingmo/editor-ui';
 export {
   ImageBlockFrame,

@@ -56,8 +56,9 @@ export function CodeBlockFrame({
     setCopyState('loading');
     try {
       await onCopy?.();
-    } finally {
       setCopyState('copied');
+    } catch {
+      setCopyState('idle');
     }
   }, [copyState, onCopy]);
 
@@ -92,7 +93,7 @@ export function CodeBlockFrame({
     <pre
       data-slot='code-block'
       className={cn(
-        'group/code-block flex max-h-100 min-w-0 max-w-full flex-col overflow-hidden rounded-xl border border-border/70 bg-muted/50 text-foreground shadow-xs dark:bg-muted/20',
+        'group/code-block flex max-h-100 min-w-0 max-w-full flex-col overflow-hidden rounded-xl border border-border/70 bg-muted/50 text-foreground shadow-xs data-[selected=true]:border-ring data-[selected=true]:ring-2 data-[selected=true]:ring-ring/30 dark:bg-muted/20',
         className,
       )}
       {...props}

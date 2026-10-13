@@ -51,7 +51,7 @@
   margin: 0.75rem 0;
 }
 
-.slash-command-demo-editor pre {
+.slash-command-demo-editor pre:not([data-slot='code-block']) {
   overflow-x: auto;
   border-radius: 0.5rem;
   padding: 1rem;

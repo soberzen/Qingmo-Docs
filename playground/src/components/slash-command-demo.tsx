@@ -1,5 +1,5 @@
 import {
-  CodeBlock,
+  CodeHighlight,
   Document,
   MathBlock,
   MathInline,
@@ -8,6 +8,7 @@ import {
   Text,
 } from '@qingmo/core';
 import {
+  CodeBlock,
   createSlashCommandRenderer,
   EditorFrame,
   SlashCommandMenu,
@@ -40,6 +41,16 @@ function createInitialContent(): JSONContent {
         type: 'paragraph',
         content: [
           { type: 'text', text: '在下方空白段落输入 /，选择要插入的内容。' },
+        ],
+      },
+      {
+        type: 'codeBlock',
+        attrs: { language: 'javascript' },
+        content: [
+          {
+            type: 'text',
+            text: "const message = 'Hello, Qingmo!';\nconsole.log(message);",
+          },
         ],
       },
       { type: 'paragraph' },
@@ -150,6 +161,7 @@ export function SlashCommandDemo() {
         DemoParagraph,
         Text,
         CodeBlock,
+        CodeHighlight,
         MathBlock,
         MathInline,
         SlashCommand.configure({
@@ -204,6 +216,7 @@ export function SlashCommandDemo() {
       <p className='text-sm leading-6 text-muted-foreground'>
         在段落开头输入 / 打开菜单，继续输入中文名称或英文别名筛选。 使用 ↑ / ↓
         选择、Enter 执行、Esc 关闭，也可以点击命令。
+        示例代码可直接编辑，点击语言名称可搜索并切换语言。
       </p>
       <div className='flex flex-wrap gap-2'>
         <Button
@@ -248,7 +261,7 @@ export function SlashCommandDemo() {
         在空代码块开头输入 / 只显示“文本段落”，可验证 shouldHidden。
       </p>
       <details>
-        <summary>查看 Slash Command 文档 JSON</summary>
+        <summary>查看当前文档 JSON</summary>
         <pre>{json}</pre>
       </details>
     </div>

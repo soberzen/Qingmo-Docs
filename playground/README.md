@@ -44,6 +44,11 @@ Editor，加载 core 中的 `MathBlock` 和 `MathInline`，用于测试节点实
    `shouldHidden`；选择它可以回到正文。
 6. 点击“切换只读”检查编辑器与打开菜单按钮，再点击“重置示例”恢复初始内容。
 
+编辑器中的代码块使用 React 包导出的 `CodeBlock`
+扩展，core 的代码块定义保持独立。初始内容包含一段 JavaScript，斜杠命令插入的代码块也使用同一个视图。示例同时加载 core 的
+`CodeHighlight`，用于检查语法高亮在代码视图中正常显示。React 扩展继承 core 的
+`renderHTML`，工具栏只用于编辑器界面，不会进入文档 JSON 或导出 HTML。
+
 新增示例命令时修改 `groups`，使用 React 包导出的 `SlashCommandMenuGroup[]`
 类型，为命令提供 `name`、`label`、`description`、可选 `aliases`、可选 `icon` 和
 `action(editor)`。`icon` 接受 `ReactNode`，例如
@@ -65,6 +70,15 @@ state作为当前语言，`supportedLanguages` 提供 `{ id, name, match }` 配�
 更新 state。点击工具栏中的语言名称可打开搜索菜单，按显示名称、语言 ID 或别名搜索，例如
 `JavaScript`、`ts`、`py`；选择后检查工具栏名称、选中标记和下方当前语言 ID。也可使用 ↑
 / ↓ 和 Enter 选择，按 Esc 关闭。
+
+斜杠命令编辑器中的代码块可进行以下测试：
+
+1. 直接修改示例代码，展开“查看当前文档 JSON”，检查 `codeBlock.content`
+   同步更新，且 JSON 仅保留代码节点、语言属性与正文，没有工具栏内容。
+2. 点击代码块工具栏的语言名称，搜索并选择 Python，检查工具栏显示 Python，且 JSON 中
+   `codeBlock.attrs.language` 变为 `python`。
+3. 在空白段落通过 `/code` 插入新的代码块，检查工具栏、语言选择和正文输入。
+4. 点击“切换只读”，检查代码正文不可编辑，语言选择不能修改，复制仍可用；点击“恢复编辑”后继续修改代码和语言。
 
 ## MathBlock 测试
 

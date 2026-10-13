@@ -5,10 +5,32 @@ depends on `@qingmo/core` for editor behavior and `@qingmo/editor-ui` for view
 components. It owns editor initialization, hooks, context, and component
 composition. Concrete styled components are implemented in editor-ui, not here.
 
-The current entry exports `EditorFrame`, `ImageBlockFrame`, and their props
-from editor-ui. Editor initialization APIs and concrete node views will be
-added as the editor is implemented. There is no direct dependency on shadcn
-or Tailwind.
+The current entry exports shared editor-ui components and the React `CodeBlock`
+extension. There is no direct dependency on shadcn or Tailwind.
+
+## Code block node views
+
+Import `CodeBlock` from `@qingmo/react` in a React editor. It extends core's
+`CodeBlock` and adds a node view through `renderNodeView`, which wraps Tiptap's
+`ReactNodeViewRenderer`. Register this extension once instead of also
+registering core's `CodeBlock`; both use the same `codeBlock` node name.
+
+```tsx
+import { CodeBlock } from '@qingmo/react';
+
+const codeBlock = CodeBlock.configure({ defaultLanguage: 'javascript' });
+```
+
+The node view adapter passes node attributes and editor callbacks to editor-ui's
+`CodeBlockFrame`. Language changes call `updateAttributes({ language })`;
+copying uses the node's text content. `NodeViewContent` hosts the editable code,
+which ProseMirror owns, including syntax highlighting decorations. The language
+picker is disabled in a read-only editor, while copying remains available.
+
+Core retains the schema, commands, parsing, and HTML serialization. The React
+toolbar only appears in the editor and is not included in document JSON or
+exported HTML. Other React node views can follow the same extension-and-adapter
+pattern.
 
 ## Imports and styles
 
@@ -27,8 +49,9 @@ Import the stylesheet once from the application's CSS entry:
 ```
 
 This stylesheet forwards editor-ui's style entry, including its source
-registration and the shared shadcn theme. Applications own their fonts and page
-layout and use Tailwind's Vite plugin to compile the styles.
+registration and the shared shadcn theme, and core's syntax highlighting styles.
+Applications own their fonts and page layout and use Tailwind's Vite plugin to
+compile the styles.
 
 ## Package boundaries
 
