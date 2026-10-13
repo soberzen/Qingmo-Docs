@@ -62,6 +62,29 @@ Editor，加载 core 中的 `MathBlock` 和 `MathInline`，用于测试节点实
 和分组传给菜单。菜单选中命令后直接调用
 `action(editor)`；core 为返回的命令包装 action，先清除当前 Suggestion 范围内的斜杠和搜索词，再执行原始 action 并恢复编辑器焦点。位置与挂载由 core 的 Suggestion 管理。
 
+## Mention 提及测试
+
+`src/components/mention-demo.tsx` 接入 core 的 `Mention`、React 的
+`createMentionCommandRenderer` 和 editor-ui 的 `MentionCommandMenu`。输入 `@`
+打开浮层后，焦点进入浮层的搜索框。搜索词和结果由菜单自己维护，不使用编辑器中的
+`Suggestion.query` 或 `props.items`。
+
+演示通过 `fetch('/api/playground/mentions?q=...')`
+发起 HTTP 请求。Vite 的本地开发和 preview 服务使用 `src/data/mention-items.ts`
+中的演示用户、文章响应请求；实际项目通过 `searchItems(searchText, { signal })`
+传入业务搜索接口。
+
+1. 在正文任意位置输入 `@`，或点击“打开提及弹窗”，检查搜索框自动获得焦点。
+2. 搜索“张”“alice”“代码”或“协作”，点击结果或使用 ↑ / ↓ 和 Enter 插入。原来的 `@`
+   被替换为完整提及，弹窗关闭，焦点返回编辑器。
+3. 搜索不存在的词，检查空状态；搜索
+   `error`，检查错误和重试入口。清空搜索后显示推荐项。
+4. 快速更换搜索词，确认旧请求不会覆盖新结果；按 Esc 或关闭按钮取消，正文保留
+   `@`。
+5. 提及后的光标位置按 Backspace，检查整体删除；切换只读，检查不能插入、删除或打开菜单。
+6. 展开“查看提及 JSON、HTML 和纯文本”，检查 `id/label` 保存在 JSON 中，HTML 保存
+   `data-id/data-label` 并显示 `@名称`，纯文本同样保留显示名称。
+
 ## Placeholder 测试
 
 斜杠命令和数学公式编辑器都加载 core 导出的 `Placeholder`。通过

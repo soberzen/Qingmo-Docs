@@ -11,6 +11,7 @@ import { useState } from 'react';
 
 import { ImageBlockDemo } from './components/image-block-demo';
 import { MathBlockDemo } from './components/math-block-demo';
+import { MentionDemo } from './components/mention-demo';
 import { SlashCommandDemo } from './components/slash-command-demo';
 
 const codeBlockLanguages: SupportedLanguageConfig[] = [
@@ -56,6 +57,19 @@ function App() {
               Slash Command 测试
             </h2>
             <SlashCommandDemo />
+          </section>
+
+          <section
+            aria-labelledby='mention-heading'
+            className='rounded-xl border bg-card p-6 text-card-foreground'
+          >
+            <h2
+              id='mention-heading'
+              className='text-lg font-semibold'
+            >
+              Mention 提及测试
+            </h2>
+            <MentionDemo />
           </section>
 
           <section
