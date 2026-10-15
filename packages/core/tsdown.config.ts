@@ -9,4 +9,7 @@ export default defineConfig({
   minify: true,
   outDir: './dist',
   tsconfig: './tsconfig.json',
+  css: {
+    minify: true,
+  },
 });
