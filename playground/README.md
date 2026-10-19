@@ -118,6 +118,21 @@ state作为当前语言，`supportedLanguages` 提供 `{ id, name, match }` 配�
 3. 在空白段落通过 `/code` 插入新的代码块，检查工具栏、语言选择和正文输入。
 4. 点击“切换只读”，检查代码正文不可编辑，语言选择不能修改，复制仍可用；点击“恢复编辑”后继续修改代码和语言。
 
+## ImageBlock NodeView 测试
+
+`src/components/image-block-node-view-demo.tsx`
+创建真实 Tiptap 编辑器，直接加载 core 的 `ImageBlock`，用于查看原生 DOM
+NodeView 的图片、图注与属性更新。原有 `ImageBlockFrame` 独立预览继续保留。
+
+1. 点击“选择第一张图片”，检查选中标记。首张图片位于 `pos = 0`。
+2. 修改图片地址、图注或宽度，再点击“更新选中图片”；切换左、中、右对齐，检查图片位置。
+3. 点击“插入图片”在文档末尾添加图片；选择图片后删除，检查编辑器内容同步变化。
+4. 切换只读，检查编辑器和修改控件状态；点击“重置图片示例”恢复初始内容。
+5. 展开“查看图片节点 JSON 和 HTML”，检查图片属性及图注；点击“重新导入 HTML”验证往返。图注由节点属性保存，仅作为文本展示。
+
+示例样式位于
+`src/index.css`，仅提供编辑器边框、选中标记及文字排版。图片尺寸、左右 margin 和图注间距由 core 的 NodeView 管理，方便直接验证其更新行为。
+
 ## MathBlock 测试
 
 测试组件位于 `src/components/math-block-demo.tsx`，KaTeX 样式在 `src/main.tsx`

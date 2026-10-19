@@ -10,6 +10,7 @@ import { showToast } from '@qingmo/shadcn/lib/toast';
 import { useState } from 'react';
 
 import { ImageBlockDemo } from './components/image-block-demo';
+import { ImageBlockNodeViewDemo } from './components/image-block-node-view-demo';
 import { MathBlockDemo } from './components/math-block-demo';
 import { MentionDemo } from './components/mention-demo';
 import { SlashCommandDemo } from './components/slash-command-demo';
@@ -86,6 +87,19 @@ function App() {
               测试 MathBlock 和 MathInline 的公式渲染、节点命令和输入规则。
             </p>
             <MathBlockDemo />
+          </section>
+
+          <section
+            aria-labelledby='image-node-heading'
+            className='rounded-xl border bg-card p-6 text-card-foreground'
+          >
+            <h2
+              id='image-node-heading'
+              className='text-lg font-semibold'
+            >
+              ImageBlock NodeView 测试
+            </h2>
+            <ImageBlockNodeViewDemo />
           </section>
 
           <section
