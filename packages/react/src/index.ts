@@ -1,4 +1,5 @@
 export { CodeBlock } from './nodes/code-block/code-block';
+export { ImageBlock } from './nodes/image-block/image-block';
 export {
   renderNodeView,
   type RenderNodeViewProps,

@@ -6,7 +6,8 @@ components. It owns editor initialization, hooks, context, and component
 composition. Concrete styled components are implemented in editor-ui, not here.
 
 The current entry exports shared editor-ui components and the React `CodeBlock`
-extension. There is no direct dependency on shadcn or Tailwind.
+and `ImageBlock` extensions. There is no direct dependency on shadcn or
+Tailwind.
 
 ## Code block node views
 
@@ -31,6 +32,38 @@ Core retains the schema, commands, parsing, and HTML serialization. The React
 toolbar only appears in the editor and is not included in document JSON or
 exported HTML. Other React node views can follow the same extension-and-adapter
 pattern.
+
+## Image block node views
+
+Import `ImageBlock` from `@qingmo/react` to use editor-ui's `ImageBlockFrame`
+inside a React editor. Like `CodeBlock`, this extension inherits core's schema,
+commands, parsing, and HTML serialization, and only replaces its node view
+through `renderNodeView`. Register the React extension once; do not also
+register core's `ImageBlock`, since both use the `imageBlock` node name.
+
+```tsx
+import { ImageBlock } from '@qingmo/react';
+
+const imageBlock = ImageBlock.configure({ allowBase64: false });
+```
+
+The adapter forwards the image URL, alternative text, title, caption, width, and
+alignment to `ImageBlockFrame`. The frame provides loading, failure, retry, and
+aspect-preserving resizing. When a resize finishes, the adapter writes the
+rounded width and height back to node attributes. Saved dimensions also provide
+the initial placeholder aspect ratio until the image loads.
+
+The image node is atomic, so its node view does not use `NodeViewContent`.
+Captions appear as text below the image. Click the caption to edit it using
+shadcn's `Input`; blurring it or pressing Enter restores the text display. The
+caption has a fixed 320px width, limited by its container, and follows the
+image's alignment. Image resizing does not change the caption width. Changes are
+written immediately to the `caption` attribute without trimming spaces during
+input. An empty caption shows an add-caption button in editable mode. Core's
+commands, such as `setImageBlockCaption`, can also update it. Switching the
+editor to read-only mode displays the caption as text, hides empty captions, and
+removes resize controls while preserving image loading and retry. React controls
+are not included in document JSON or exported HTML.
 
 ## Mention menus
 
