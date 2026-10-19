@@ -1,12 +1,11 @@
 import {
   Document,
-  ImageBlock,
   Paragraph,
   Text,
   type ImageBlockAlign,
   type ImageBlockAttributes,
 } from '@qingmo/core';
-import { EditorFrame } from '@qingmo/react';
+import { EditorFrame, ImageBlock } from '@qingmo/react';
 import { Button } from '@qingmo/shadcn/components/button';
 import { Input } from '@qingmo/shadcn/components/input';
 import { Label } from '@qingmo/shadcn/components/label';
@@ -17,7 +16,7 @@ import { useState } from 'react';
 
 const initialFields = {
   src: '/image-block-demo.svg',
-  caption: '由 core 原生 DOM NodeView 渲染的图片。',
+  caption: '由 React NodeView 渲染，支持拖拽调整大小。',
   width: '480',
 };
 
@@ -74,6 +73,21 @@ export function ImageBlockNodeViewDemo() {
     });
   }
 
+  function syncSelectedImage(current: Editor) {
+    const { selection } = current.state;
+    if (
+      !(selection instanceof NodeSelection) ||
+      selection.node.type.name !== 'imageBlock'
+    )
+      return;
+    const { src, caption, width } = selection.node.attrs;
+    setFields({
+      src: src ?? '',
+      caption: caption ?? '',
+      width: String(width ?? 480),
+    });
+  }
+
   const editor = useEditor({
     extensions: [Document, DemoParagraph, Text, ImageBlock],
     content: createInitialContent(),
@@ -86,16 +100,11 @@ export function ImageBlockNodeViewDemo() {
       },
     },
     onCreate: ({ editor: current }) => updateSnapshot(current),
-    onUpdate: ({ editor: current }) => updateSnapshot(current),
-    onSelectionUpdate: ({ editor: current }) => {
-      if (!current.isActive('imageBlock')) return;
-      const { src, caption, width } = current.getAttributes('imageBlock');
-      setFields({
-        src: src ?? '',
-        caption: caption ?? '',
-        width: String(width ?? 480),
-      });
+    onUpdate: ({ editor: current }) => {
+      updateSnapshot(current);
+      syncSelectedImage(current);
     },
+    onSelectionUpdate: ({ editor: current }) => syncSelectedImage(current),
   });
   const selectedImage = useEditorState({
     editor,
@@ -124,9 +133,9 @@ export function ImageBlockNodeViewDemo() {
   return (
     <div className='image-node-demo'>
       <p className='text-sm leading-6 text-muted-foreground'>
-        直接加载 core 的 ImageBlock 原生
-        NodeView。选中图片后可更新地址、宽度和图注，
-        或切换对齐方式；清空图注后，图片下方的说明会移除。
+        使用 React 包的 ImageBlock，图片加载后可拖动四角调整大小，
+        也可以点击图片下方的说明进行编辑，失焦或按回车后恢复文字展示。
+        选中图片后可更新地址、宽度和图注，或切换对齐方式。
       </p>
       <form
         className='grid gap-3'

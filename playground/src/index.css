@@ -177,26 +177,6 @@
   margin: 0.75rem 0;
 }
 
-/* 选中标记落在图片上，宽度和对齐仍由 core 的 NodeView 控制。 */
-.image-node-demo-editor [data-node-type='imageBlock'].ProseMirror-selectednode {
-  outline: none;
-}
-
-.image-node-demo-editor
-  [data-node-type='imageBlock'].ProseMirror-selectednode
-  figure[data-block-type='image'] {
-  outline: 2px solid var(--ring);
-  outline-offset: 3px;
-  border-radius: 0.5rem;
-}
-
-.image-node-demo-editor figure[data-block-type='image'] figcaption {
-  color: var(--muted-foreground);
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-
 .math-block-demo {
   display: grid;
   gap: 1rem;
