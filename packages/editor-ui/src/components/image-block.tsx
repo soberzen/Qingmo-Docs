@@ -1,4 +1,5 @@
 import { Button } from '@qingmo/shadcn/components/button';
+import { Input } from '@qingmo/shadcn/components/input';
 import { cn } from '@qingmo/shadcn/lib/utils';
 import { ImageOff, Image as ImageIcon, Loader2, RotateCcw } from 'lucide-react';
 import { Component, useCallback, useEffect, useRef, useState } from 'react';
@@ -16,17 +17,20 @@ export type ImageBlockFrameProps = Omit<
   src: string;
   alt?: string;
   caption?: ReactNode;
-  /** Controlled width in CSS pixels. Update it from onResizeEnd. */
+  align?: 'left' | 'center' | 'right';
+  /** 受控宽度，单位为 CSS 像素，通过 onResizeEnd 更新。 */
   width?: number;
   defaultWidth?: number;
   minWidth?: number;
   maxWidth?: number;
-  /** Placeholder ratio; the loaded image uses its intrinsic ratio. */
+  /** 占位区域的宽高比；图片加载后使用图片本身的比例。 */
   aspectRatio?: number;
   resizable?: boolean;
   loading?: 'lazy' | 'eager';
   onResizeEnd?: (size: ImageBlockSize) => void;
-  /** Optionally return a refreshed URL, e.g. for an expired signed URL. */
+  /** 传入回调后，可直接编辑纯文本图注。 */
+  onCaptionChange?: (caption: string) => void;
+  /** 可返回更新后的图片地址，例如刷新已过期的签名地址。 */
   onRetry?: () => string | void | Promise<string | void>;
 };
 
@@ -191,6 +195,7 @@ function ImageBlockContent({
   src,
   alt = '',
   caption,
+  align = 'center',
   width,
   defaultWidth = 640,
   minWidth = 120,
@@ -199,10 +204,17 @@ function ImageBlockContent({
   resizable = true,
   loading = 'lazy',
   onResizeEnd,
+  onCaptionChange,
   onRetry,
   className,
   ...props
 }: ImageBlockFrameProps) {
+  const captionText = typeof caption === 'string' ? caption : '';
+  const [captionState, setCaptionState] = useState({
+    source: captionText,
+    draft: captionText,
+  });
+  const [isEditingCaption, setIsEditingCaption] = useState(false);
   const [enteredViewport, setEnteredViewport] = useState(false);
   const [supportsObserver, setSupportsObserver] = useState(true);
   const shouldLoad =
@@ -222,6 +234,7 @@ function ImageBlockContent({
     isResizing,
     getHandleProps,
   } = useImageResize({
+    align,
     defaultWidth,
     minWidth,
     aspectRatio: ratio,
@@ -231,9 +244,20 @@ function ImageBlockContent({
     ...(onResizeEnd && { onResizeEnd }),
   });
 
+  if (captionState.source !== captionText) {
+    setCaptionState({ source: captionText, draft: captionText });
+  }
+  if (!onCaptionChange && isEditingCaption) setIsEditingCaption(false);
+
+  const layoutStyle = {
+    width: renderedWidth,
+    marginLeft: align === 'left' ? 0 : 'auto',
+    marginRight: align === 'right' ? 0 : 'auto',
+  };
+
   useEffect(() => {
     mounted.current = true;
-    // Detect support after hydration so server and client placeholders match.
+    // 水合后再检查支持情况，保证服务端与客户端的占位内容一致。
     if (typeof IntersectionObserver === 'undefined') {
       queueMicrotask(() => {
         if (mounted.current) setSupportsObserver(false);
@@ -277,7 +301,7 @@ function ImageBlockContent({
       }));
       setEnteredViewport(true);
     } catch {
-      // Keep the failure card available when refreshing the URL also fails.
+      // 刷新地址失败后仍保留错误提示，允许用户再次重试。
     } finally {
       if (mounted.current) {
         retryPending.current = false;
@@ -289,7 +313,8 @@ function ImageBlockContent({
   return (
     <figure
       data-slot='image-block'
-      className={cn('my-4 w-full', className)}
+      data-align={align}
+      className={cn('group/image-block my-4 w-full', className)}
       {...props}
     >
       <div
@@ -300,13 +325,14 @@ function ImageBlockContent({
         <div
           ref={frameRef}
           data-slot='image-frame'
+          data-align={align}
           data-resizing={isResizing || undefined}
           className={cn(
-            'group/image relative mx-auto max-w-full rounded-lg bg-muted/40',
+            'group/image relative max-w-full rounded-lg bg-muted/40 group-data-[selected=true]/image-block:ring-2 group-data-[selected=true]/image-block:ring-ring',
             isResizing && 'select-none ring-2 ring-ring',
           )}
           style={{
-            width: renderedWidth,
+            ...layoutStyle,
             aspectRatio: ratio,
             minHeight: naturalRatio === null ? 160 : undefined,
           }}
@@ -339,9 +365,49 @@ function ImageBlockContent({
             ))}
         </div>
       </div>
-      {caption != null && (
-        <figcaption className='mt-3 text-center text-sm text-muted-foreground'>
-          {caption}
+      {(caption != null || onCaptionChange) && (
+        <figcaption
+          className='mt-3 max-w-full text-center text-sm whitespace-pre-wrap text-muted-foreground'
+          style={{ ...layoutStyle, width: 320 }}
+        >
+          {onCaptionChange ? (
+            isEditingCaption ? (
+              <Input
+                autoFocus
+                aria-label='图片说明'
+                placeholder='添加图片说明…'
+                value={captionState.draft}
+                onChange={(event) => {
+                  const nextCaption = event.target.value;
+                  // 先更新输入值，避免节点属性回传前回退文字并移动光标。
+                  setCaptionState({ source: captionText, draft: nextCaption });
+                  onCaptionChange(nextCaption);
+                }}
+                onBlur={() => setIsEditingCaption(false)}
+                onKeyDown={(event) => {
+                  if (event.nativeEvent.isComposing) return;
+                  if (event.key === 'Enter' || event.key === 'Escape') {
+                    event.preventDefault();
+                    event.currentTarget.blur();
+                  }
+                }}
+                onDragStart={(event) => event.stopPropagation()}
+                className='text-center'
+              />
+            ) : (
+              <button
+                type='button'
+                aria-label={captionText ? '编辑图片说明' : '添加图片说明'}
+                onClick={() => setIsEditingCaption(true)}
+                onDragStart={(event) => event.stopPropagation()}
+                className='max-w-full cursor-text rounded-sm wrap-break-word whitespace-pre-wrap outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50'
+              >
+                {captionText || '添加图片说明…'}
+              </button>
+            )
+          ) : (
+            caption
+          )}
         </figcaption>
       )}
     </figure>

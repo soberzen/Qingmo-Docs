@@ -13,6 +13,7 @@ export type ImageResizeHandle =
   | 'bottom-right';
 
 export type UseImageResizeOptions = {
+  align?: 'left' | 'center' | 'right' | undefined;
   width?: number | undefined;
   defaultWidth?: number | undefined;
   minWidth?: number | undefined;
@@ -28,6 +29,7 @@ type ResizeGesture = {
   startX: number;
   startY: number;
   startWidth: number;
+  horizontalScale: number;
   currentWidth: number;
   target: HTMLButtonElement;
 };
@@ -48,17 +50,18 @@ function positiveNumber(value: number | undefined, fallback: number) {
 function releasePointer(gesture: ResizeGesture | null) {
   if (!gesture) return;
 
-  // The browser may already have released capture after cancel or removal.
+  // 指针取消或元素移除后，浏览器可能已经释放捕获。
   try {
     if (gesture.target.hasPointerCapture(gesture.pointerId)) {
       gesture.target.releasePointerCapture(gesture.pointerId);
     }
   } catch {
-    // The pointer no longer exists, so there is nothing left to release.
+    // 指针已不存在，无需再次释放。
   }
 }
 
 export function useImageResize({
+  align = 'center',
   width,
   defaultWidth = 640,
   minWidth = 120,
@@ -99,7 +102,7 @@ export function useImageResize({
         requestedMinimum,
       ),
   );
-  // A narrow container takes precedence over the requested minimum.
+  // 容器比最小宽度更窄时，优先保证图片不超出容器。
   const minimum = Math.min(requestedMinimum, maximum);
   const constrainWidth = useCallback(
     (value: number) => Math.min(maximum, Math.max(minimum, value)),
@@ -176,15 +179,17 @@ export function useImageResize({
   ) => {
     const horizontalDirection = gesture.handle.endsWith('left') ? -1 : 1;
     const verticalDirection = gesture.handle.startsWith('top') ? -1 : 1;
-    // The frame is horizontally centered: each horizontal edge moves half
-    // the width delta. Vertical movement converts height back into width.
+    // 居中图片的两边同时移动，宽度变化为指针位移的两倍；
+    // 靠左或靠右时固定对应边，宽度按单倍位移变化。
+    // 固定边上的手柄仍按向外放大、向内缩小的规则调整对侧边。
     const horizontalDelta =
-      (clientX - gesture.startX) * horizontalDirection * 2;
+      (clientX - gesture.startX) *
+      horizontalDirection *
+      gesture.horizontalScale;
     const verticalDelta =
       (clientY - gesture.startY) * verticalDirection * ratio;
-    // The top edge stays in the document flow. Top handles therefore resize
-    // from horizontal movement; applying a vertical delta would move the
-    // opposite edge while leaving the grabbed corner stationary.
+    // 顶边保持在文档流中的位置，因此顶角只使用横向位移；
+    // 底角可以将纵向位移按宽高比换算为宽度变化。
     const delta =
       gesture.handle.startsWith('top') ||
       Math.abs(horizontalDelta) >= Math.abs(verticalDelta)
@@ -236,6 +241,7 @@ export function useImageResize({
         startX: event.clientX,
         startY: event.clientY,
         startWidth,
+        horizontalScale: align === 'center' ? 2 : 1,
         currentWidth: startWidth,
         target: event.currentTarget,
       };
