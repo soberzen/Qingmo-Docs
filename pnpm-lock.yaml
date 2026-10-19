@@ -140,6 +140,9 @@ importers:
       '@tiptap/extension-code-block':
         specifier: ^3.31.4
         version: 3.31.4(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(@tiptap/pm@3.31.4)
+      '@tiptap/extension-image':
+        specifier: ^3.32.0
+        version: 3.32.0(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))
       '@tiptap/pm':
         specifier: ^3.31.4
         version: 3.31.4
@@ -2163,6 +2166,11 @@ packages:
       '@floating-ui/dom': ^1.0.0
       '@tiptap/core': 3.31.4
       '@tiptap/pm': 3.31.4
+
+  '@tiptap/extension-image@3.32.0':
+    resolution: {integrity: sha512-nv/YlOMwFUp2ItffQbHb14yAJjrn9sdxKl0WK5rH8PPiNoXVkvasieoBLNTHan9gjhrSp7LjVG2ZsMoSe/I7gg==}
+    peerDependencies:
+      '@tiptap/core': 3.32.0
 
   '@tiptap/markdown@3.30.5':
     resolution: {integrity: sha512-0yDt0AsiNHY0ZzlvELmzOmjfo55eJKV1euRYQp0aI5XPh+2YOdOm8cZqlhdHpJrN0wdrP/nVGxumsNmC/dqx4Q==}
@@ -6404,6 +6412,10 @@ snapshots:
       '@tiptap/core': 3.31.4(@tiptap/pm@3.31.4)
       '@tiptap/pm': 3.31.4
     optional: true
+
+  '@tiptap/extension-image@3.32.0(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))':
+    dependencies:
+      '@tiptap/core': 3.31.4(@tiptap/pm@3.31.4)
 
   '@tiptap/markdown@3.30.5(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(@tiptap/pm@3.31.4)':
     dependencies:

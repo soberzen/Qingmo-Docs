@@ -4,6 +4,11 @@ export { Text } from './basic-node/text';
 export { CodeHighlight } from './extensions/code-highlight/code-highlight';
 export { Placeholder, type PlaceholderOptions } from './extensions/placeholder';
 export { CodeBlock } from './nodes/code-block';
+export {
+  ImageBlock,
+  type ImageBlockAlign,
+  type ImageBlockAttributes,
+} from './nodes/image-block';
 export { MathBlock, type MathBlockOptions } from './nodes/math-block';
 export { MathInline, type MathInlineOptions } from './nodes/math-inline';
 export {
