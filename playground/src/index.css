@@ -17,6 +17,132 @@
   }
 }
 
+.comment-demo {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.comment-demo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.comment-demo-frame > [data-slot='editor-body'] {
+  padding: 0;
+}
+
+.comment-demo-editor {
+  min-height: 17rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+  caret-color: var(--foreground);
+}
+
+.comment-demo-editor:focus-visible {
+  border-radius: 0.5rem;
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.comment-demo-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.comment-demo-editor p {
+  min-height: 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.comment-demo-editor ::selection {
+  background: #dbeafe;
+  color: #172554;
+}
+
+.comment-demo-editor .comment-highlight {
+  border-bottom: 1px solid #b45309;
+  background: #fef3c7;
+  color: #422006;
+  cursor: pointer;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.comment-demo-editor .comment-highlight.is-active {
+  border-bottom-color: #92400e;
+  background: #fde68a;
+}
+
+.comment-demo-selection {
+  max-height: 5rem;
+  margin: 0;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.comment-demo-input {
+  width: 100%;
+  min-height: 5.5rem;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.comment-demo-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.comment-demo-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.comment-demo-list {
+  display: grid;
+  max-height: 28rem;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+
+.comment-demo-item {
+  border-bottom: 1px solid var(--border);
+  padding: 0.875rem 0.75rem;
+  scroll-margin-block: 1rem;
+}
+
+.comment-demo-item[data-active='true'] {
+  background: var(--muted);
+}
+
+.comment-demo-quote {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .comment-demo-layout {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+
 .slash-command-demo {
   display: grid;
   gap: 1rem;

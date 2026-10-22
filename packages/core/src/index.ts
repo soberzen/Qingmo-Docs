@@ -2,6 +2,8 @@ export { Document } from './basic-node/document';
 export { Paragraph } from './basic-node/paragraph';
 export { Text } from './basic-node/text';
 export { CodeHighlight } from './extensions/code-highlight/code-highlight';
+export { Comment, type CommentOptions } from './extensions/comment/comment';
+export type { CommentAnchor } from './extensions/comment/types';
 export { Placeholder, type PlaceholderOptions } from './extensions/placeholder';
 export { CodeBlock } from './nodes/code-block';
 export {

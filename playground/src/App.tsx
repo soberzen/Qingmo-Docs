@@ -9,6 +9,7 @@ import { TooltipProvider } from '@qingmo/shadcn/components/tooltip';
 import { showToast } from '@qingmo/shadcn/lib/toast';
 import { useState } from 'react';
 
+import { CommentDemo } from './components/comment-demo';
 import { ImageBlockDemo } from './components/image-block-demo';
 import { ImageBlockNodeViewDemo } from './components/image-block-node-view-demo';
 import { MathBlockDemo } from './components/math-block-demo';
@@ -46,6 +47,19 @@ function App() {
               编辑器界面与共享 UI 的独立调试环境。
             </p>
           </header>
+
+          <section
+            aria-labelledby='comment-heading'
+            className='rounded-xl border bg-card p-6 text-card-foreground'
+          >
+            <h2
+              id='comment-heading'
+              className='text-lg font-semibold'
+            >
+              Comment 评论测试
+            </h2>
+            <CommentDemo />
+          </section>
 
           <section
             aria-labelledby='slash-command-heading'

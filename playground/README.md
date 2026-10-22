@@ -24,6 +24,26 @@ playground 启动前会通过 Turbo 构建 React 包及其依赖，因为 React 
 布局组件，并保留图片块、共享基础组件和通知示例。数学公式区域直接初始化 Tiptap
 Editor，加载 core 中的 `MathBlock` 和 `MathInline`，用于测试节点实现。
 
+## Comment 评论测试
+
+测试组件位于 `src/components/comment-demo.tsx`，在 `App.tsx`
+中加载。示例直接初始化一个本地 Tiptap 编辑器，加载 core 的 `Comment`
+和 Tiptap 的 `Collaboration`。两者使用同一个
+`Y.Doc`：正文由 Collaboration 管理，评论范围保存在
+`ydoc.getMap('commentAnchors')` 中。
+
+在仓库根目录运行 `pnpm dev:playground`，可进行以下测试：
+
+1. 选择第一段，或手动选中正文中的一段文字，填写评论并创建，检查正文高亮和评论列表。
+2. 点击正文高亮或列表中的“激活”，检查激活状态；点击“定位原文”检查正文定位，点击“取消激活”检查高亮恢复普通状态。
+3. 在已标注文字前插入内容，检查高亮随原文移动；继续编辑正文，检查评论仍定位到对应范围。
+4. 删除评论，检查列表和高亮移除，正文保留。
+5. 展开详情查看锚点 JSON，检查 `anchorId`、`start`、`end` 和
+   `quote`；点击重置，检查正文和评论恢复初始状态。
+
+评论正文保存在示例的 React state 中，`Y.Map`
+只保存锚点范围及引用文字。刷新页面或重置示例会清除当前数据。示例未接入后端、协作 provider 或网络同步。
+
 ## Slash Command 测试
 
 测试组件位于 `src/components/slash-command-demo.tsx`。编辑器加载 core 的
