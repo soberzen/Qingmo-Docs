@@ -10,6 +10,10 @@
     "check-types": "go vet ./...",
     "clean": "make clean",
     "db:start": "make docker-run",
-    "db:stop": "make docker-down"
+    "db:stop": "make docker-down",
+    "docker-dev:start": "make docker-run APP_ENV=development",
+    "docker-dev:stop": "make docker-down APP_ENV=development",
+    "docker-prod:start": "make docker-run APP_ENV=production",
+    "docker-prod:stop": "make docker-down APP_ENV=production"
   }
 }

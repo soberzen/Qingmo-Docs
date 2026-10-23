@@ -1,13 +1,12 @@
 services:
   qingmo-postgresql:
-    image: postgres:18-alpine
-    container_name: qingmo-postgresql
+    image: postgres:18
     ports:
-      - '5432:5432'
+      - '${DB_PORT}:5432'
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: qingmo_dev
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: '${DB_NAME}'
       TZ: Asia/Shanghai
       PGTZ: Asia/Shanghai
     command:
@@ -18,22 +17,25 @@ services:
       - log_timezone=Asia/Shanghai
     volumes:
       - qingmo-postgresql-data:/var/lib/postgresql
-
+    networks:
+      - qingmo-network
   qingmo-redis:
-    image: redis:8-alpine
-    container_name: qingmo-redis
+    image: redis:8
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT}:6379'
     command:
       - redis-server
       - --appendonly
       - 'yes'
+      - --requirepass
+      - '${REDIS_PASSWORD}'
     volumes:
       - qingmo-redis-data:/data
+    networks:
+      - qingmo-network
 
 networks:
-  default:
-    name: qingmo-network
+  qingmo-network:
     driver: bridge
 
 volumes:

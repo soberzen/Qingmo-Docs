@@ -3,6 +3,7 @@ export APP_ENV
 
 BINARY := dist/server
 APP_PACKAGE := ./cmd/server
+COMPOSE_FLAGS = --env-file ".env.${APP_ENV}" -p "qingmo-${APP_ENV}"
 
 .PHONY: all build run dev prod test docker-run docker-down clean
 
@@ -30,19 +31,25 @@ test:
 	@APP_ENV=test go test -v ./...
 
 docker-run:
-	@if docker compose up --build 2>/dev/null; then \
-		:; \
+	@if docker compose version >/dev/null 2>&1; then \
+		docker compose -f docker-compose.yml $(COMPOSE_FLAGS) up --build; \
+	elif command -v docker-compose >/dev/null 2>&1; then \
+		echo "Using Docker Compose V1"; \
+		docker-compose -f docker-compose.yml $(COMPOSE_FLAGS) up --build; \
 	else \
-		echo "Falling back to Docker Compose V1"; \
-		docker-compose up --build; \
+		echo "error: please ensure Docker Compose is installed"; \
+		exit 1; \
 	fi
 
 docker-down:
-	@if docker compose down 2>/dev/null; then \
-		:; \
+	@if docker compose version >/dev/null 2>&1; then \
+		docker compose -f docker-compose.yml $(COMPOSE_FLAGS) down; \
+	elif command -v docker-compose >/dev/null 2>&1; then \
+		echo "Using Docker Compose V1"; \
+		docker-compose -f docker-compose.yml $(COMPOSE_FLAGS) down; \
 	else \
-		echo "Falling back to Docker Compose V1"; \
-		docker-compose down; \
+		echo "error: please ensure Docker Compose is installed"; \
+		exit 1; \
 	fi
 
 clean:
