@@ -5,7 +5,8 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"uuid"
+
+	"github.com/google/uuid"
 )
 
 type KeyPair struct {
@@ -33,7 +34,7 @@ func GenerateKeyPair() (*KeyPair, error) {
 	}
 
 	publicPEM := pem.EncodeToMemory(&pem.Block{
-		Type:  "RSA PUBLIC KEY",
+		Type:  "PUBLIC KEY",
 		Bytes: pubBytes,
 	})
 
