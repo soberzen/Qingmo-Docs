@@ -14,13 +14,12 @@ import (
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	accessSecret := os.Getenv("JWT_ACCESS_SECRET")
-	refreshSecret := os.Getenv("JWT_REFRESH_SECRET")
 	issuer := os.Getenv("JWT_ISSUER")
 	audience := os.Getenv("JWT_AUDIENCE")
+	keyStore := auth.NewRSAKeyStore(s.redis.Client(), 0)
+
 	tokenManager := auth.NewTokenManager(
-		accessSecret,
-		refreshSecret,
+		keyStore,
 		issuer,
 		audience,
 		15*time.Minute,

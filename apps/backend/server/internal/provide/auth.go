@@ -57,12 +57,13 @@ func Login(
 		return "", "", err
 	}
 
-	accessToken, _, err = tokenManager.Sign(uint(user.ID), auth.TokenTypeAccess, "")
+	accessToken, _, err = tokenManager.Sign(ctx, uint(user.ID), auth.TokenTypeAccess, "")
 	if err != nil {
 		return "", "", err
 	}
 
 	refreshToken, refreshClaims, err := tokenManager.Sign(
+		ctx,
 		uint(user.ID),
 		auth.TokenTypeRefresh,
 		sessionID,

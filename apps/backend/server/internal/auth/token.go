@@ -1,7 +1,9 @@
 package auth
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -25,45 +27,61 @@ type Claims struct {
 }
 
 type TokenManager struct {
-	accessSecret  []byte
-	refreshSecret []byte
-	issuer        string
-	audience      string
-	AccessTTL     time.Duration
-	RefreshTTL    time.Duration
+	keyStore   *RSAKeyStore
+	issuer     string
+	audience   string
+	AccessTTL  time.Duration
+	RefreshTTL time.Duration
 }
 
 func NewTokenManager(
-	accessSecret string,
-	refreshSecret string,
+	keyStore *RSAKeyStore,
 	issuer string,
 	audience string,
 	accessTTL time.Duration,
 	refreshTTL time.Duration,
 ) *TokenManager {
 	return &TokenManager{
-		accessSecret:  []byte(accessSecret),
-		refreshSecret: []byte(refreshSecret),
-		issuer:        issuer,
-		audience:      audience,
-		AccessTTL:     accessTTL,
-		RefreshTTL:    refreshTTL,
+		keyStore:   keyStore,
+		issuer:     issuer,
+		audience:   audience,
+		AccessTTL:  accessTTL,
+		RefreshTTL: refreshTTL,
 	}
 }
 
 func (m *TokenManager) Sign(
+	ctx context.Context,
 	userID uint,
 	tokenType TokenType,
 	sessionID string,
 ) (string, *Claims, error) {
-	now := time.Now()
-	ttl := m.AccessTTL
-	secret := m.accessSecret
+	var ttl time.Duration
 
-	if tokenType == TokenTypeRefresh {
+	switch tokenType {
+	case TokenTypeAccess:
+		ttl = m.AccessTTL
+	case TokenTypeRefresh:
 		ttl = m.RefreshTTL
-		secret = m.refreshSecret
+	default:
+		return "", nil, fmt.Errorf("unsupported token type %s", tokenType)
 	}
+
+	if ttl <= 0 {
+		return "", nil, fmt.Errorf("invalid token TTL for %s", tokenType)
+	}
+
+	kid, pair, err := m.keyStore.ActiveKeyContext(ctx, tokenType)
+	if err != nil {
+		return "", nil, fmt.Errorf("get active RSA key: %w", err)
+	}
+
+	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(pair.PrivatePEM))
+	if err != nil {
+		return "", nil, fmt.Errorf("parse private RSA key: %w", err)
+	}
+
+	now := time.Now()
 
 	claims := &Claims{
 		TokenType: tokenType,
@@ -78,19 +96,25 @@ func (m *TokenManager) Sign(
 			ExpiresAt: jwt.NewNumericDate(now.Add(ttl)),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signed, err := token.SignedString(secret)
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	token.Header["kid"] = kid
+	signed, err := token.SignedString(privateKey)
+	if err != nil {
+		return "", nil, fmt.Errorf("sign RSA token: %w", err)
+	}
 
-	return signed, claims, err
+	return signed, claims, nil
 }
 
 func (m *TokenManager) Parse(
+	ctx context.Context,
 	rawToken string,
 	expectedType TokenType,
 ) (*Claims, error) {
-	secret := m.accessSecret
-	if expectedType == TokenTypeRefresh {
-		secret = m.refreshSecret
+	switch expectedType {
+	case TokenTypeAccess, TokenTypeRefresh:
+	default:
+		return nil, ErrInvalidToken
 	}
 
 	claims := new(Claims)
@@ -99,10 +123,24 @@ func (m *TokenManager) Parse(
 		rawToken,
 		claims,
 		func(token *jwt.Token) (any, error) {
-			return secret, nil
+			kid, ok := token.Header["kid"].(string)
+			if !ok || kid == "" {
+				return nil, fmt.Errorf("missing or invalid JWT kid")
+			}
+			pair, err := m.keyStore.GetContext(ctx, expectedType, kid)
+			if err != nil {
+				return nil, fmt.Errorf("get RSA verification key: %w", err)
+			}
+			publicKey, err := jwt.ParseRSAPublicKeyFromPEM(
+				[]byte(pair.PublicPEM),
+			)
+			if err != nil {
+				return nil, fmt.Errorf("parse RSA public key: %w", err)
+			}
+			return publicKey, nil
 		},
 		jwt.WithValidMethods([]string{
-			jwt.SigningMethodHS256.Alg(),
+			jwt.SigningMethodRS256.Alg(),
 		}),
 		jwt.WithIssuer(m.issuer),
 		jwt.WithAudience(m.audience),
@@ -110,8 +148,18 @@ func (m *TokenManager) Parse(
 		jwt.WithIssuedAt(),
 		jwt.WithLeeway(30*time.Second),
 	)
+	if err != nil {
+		if errors.Is(err, jwt.ErrTokenExpired) ||
+			errors.Is(err, jwt.ErrTokenSignatureInvalid) ||
+			errors.Is(err, jwt.ErrTokenMalformed) ||
+			errors.Is(err, jwt.ErrTokenNotValidYet) ||
+			errors.Is(err, jwt.ErrTokenInvalidClaims) {
+			return nil, ErrInvalidToken
+		}
+		return nil, fmt.Errorf("parse token: %w", err) // 内部故障
+	}
 
-	if err != nil || !token.Valid {
+	if token == nil || !token.Valid {
 		return nil, ErrInvalidToken
 	}
 

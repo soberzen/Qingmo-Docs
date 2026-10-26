@@ -24,7 +24,7 @@ func Auth(tokenManager *auth.TokenManager) gin.HandlerFunc {
 			strings.TrimPrefix(header, "Bearer "),
 		)
 
-		claims, err := tokenManager.Parse(rawToken, auth.TokenTypeAccess)
+		claims, err := tokenManager.Parse(c.Request.Context(), rawToken, auth.TokenTypeAccess)
 		if err != nil {
 			response.Error(c, http.StatusUnauthorized, 401, "invalid or expired token")
 			c.Abort()
