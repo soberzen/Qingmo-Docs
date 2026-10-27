@@ -12,6 +12,7 @@ import (
 	"doc-server/internal/response"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type AuthHandler struct {
@@ -68,14 +69,14 @@ func (h *AuthHandler) Login(c *gin.Context) {
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req dto.Register
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, 400, "invalid request body")
+		response.Error(c, http.StatusBadRequest, 400, registerValidationMessage(err))
 		return
 	}
 
 	user, err := provide.Register(c.Request.Context(), req, h.db)
 	if err != nil {
 		if errors.Is(err, provide.ErrEmailExists) {
-			response.Error(c, http.StatusConflict, 409, "email already exists")
+			response.Error(c, http.StatusConflict, 409, "该邮箱已被注册")
 		} else {
 			response.Error(c, http.StatusInternalServerError, 500, "register failed")
 		}
@@ -88,6 +89,27 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		"email":     user.Email,
 		"avatarUrl": user.AvatarUrl,
 	})
+}
+
+func registerValidationMessage(err error) string {
+	var validationErrors validator.ValidationErrors
+	if !errors.As(err, &validationErrors) || len(validationErrors) == 0 {
+		return "请求体格式不正确"
+	}
+
+	fieldError := validationErrors[0]
+	switch fieldError.Field() + "." + fieldError.Tag() {
+	case "Name.required":
+		return "请输入昵称"
+	case "Email.required":
+		return "请输入邮箱"
+	case "Email.email":
+		return "邮箱格式不正确"
+	case "Password.required":
+		return "请输入密码"
+	default:
+		return "注册失败"
+	}
 }
 
 func (h *AuthHandler) Refresh(c *gin.Context) {}
