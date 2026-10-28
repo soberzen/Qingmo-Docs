@@ -37,7 +37,8 @@ func New() Service {
 	dsn := buildDsn()
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Warn),
+		Logger:         logger.Default.LogMode(logger.Warn),
+		TranslateError: true,
 	})
 	if err != nil {
 		log.Fatalf("can not connect database: %v", err)

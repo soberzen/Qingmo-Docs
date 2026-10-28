@@ -99,6 +99,7 @@ func (s *redisService) DeleteRefreshSession(ctx context.Context, sessionID strin
 func (s *redisService) WarmupRefreshSessions(ctx context.Context, db Service) error {
 	var sessions []entity.RefreshSessionEntity
 	if err := db.DB().
+		WithContext(ctx).
 		Where("expires_at > ? AND revoked_at IS NULL", time.Now()).
 		Find(&sessions).Error; err != nil {
 		return err

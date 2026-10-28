@@ -39,12 +39,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	{
 		public.POST("/auth/login", authHandler.Login)
 		public.POST("/auth/register", authHandler.Register)
+		public.POST("/auth/refresh", authHandler.Refresh)
 	}
 	// 需要认证的路由
 	protected := v1.Group("")
 	protected.Use(middleware.Auth(tokenManager))
 	{
-		protected.POST("/auth/refresh", authHandler.Refresh)
 		protected.POST("/auth/logout", authHandler.Logout)
 		protected.GET("/auth/profile", authHandler.Profile)
 	}

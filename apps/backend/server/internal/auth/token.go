@@ -7,8 +7,11 @@ import (
 	"strconv"
 	"time"
 
+	"doc-server/internal/errs"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 )
 
 type TokenType string
@@ -17,8 +20,6 @@ const (
 	TokenTypeAccess  TokenType = "access"
 	TokenTypeRefresh TokenType = "refresh"
 )
-
-var ErrInvalidToken = errors.New("invalid token")
 
 type Claims struct {
 	TokenType TokenType `json:"token_type"`
@@ -114,31 +115,38 @@ func (m *TokenManager) Parse(
 	switch expectedType {
 	case TokenTypeAccess, TokenTypeRefresh:
 	default:
-		return nil, ErrInvalidToken
+		return nil, errs.ErrTokenInvalid
 	}
 
 	claims := new(Claims)
 
+	var internalErr error
+	keyFunc := func(token *jwt.Token) (any, error) {
+		kid, ok := token.Header["kid"].(string)
+		if !ok || kid == "" {
+			return nil, errs.ErrTokenInvalid
+		}
+
+		pair, err := m.keyStore.GetContext(ctx, expectedType, kid)
+		if err != nil {
+			if errors.Is(err, redis.Nil) {
+				return nil, errs.ErrTokenInvalid
+			}
+			internalErr = fmt.Errorf("get RSA verification key: %w", err)
+			return nil, internalErr
+		}
+		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(pair.PublicPEM))
+		if err != nil {
+			internalErr = fmt.Errorf("parse RSA public key: %w", err)
+			return nil, internalErr
+		}
+		return publicKey, nil
+	}
+
 	token, err := jwt.ParseWithClaims(
 		rawToken,
 		claims,
-		func(token *jwt.Token) (any, error) {
-			kid, ok := token.Header["kid"].(string)
-			if !ok || kid == "" {
-				return nil, fmt.Errorf("missing or invalid JWT kid")
-			}
-			pair, err := m.keyStore.GetContext(ctx, expectedType, kid)
-			if err != nil {
-				return nil, fmt.Errorf("get RSA verification key: %w", err)
-			}
-			publicKey, err := jwt.ParseRSAPublicKeyFromPEM(
-				[]byte(pair.PublicPEM),
-			)
-			if err != nil {
-				return nil, fmt.Errorf("parse RSA public key: %w", err)
-			}
-			return publicKey, nil
-		},
+		keyFunc,
 		jwt.WithValidMethods([]string{
 			jwt.SigningMethodRS256.Alg(),
 		}),
@@ -149,22 +157,18 @@ func (m *TokenManager) Parse(
 		jwt.WithLeeway(30*time.Second),
 	)
 	if err != nil {
-		if errors.Is(err, jwt.ErrTokenExpired) ||
-			errors.Is(err, jwt.ErrTokenSignatureInvalid) ||
-			errors.Is(err, jwt.ErrTokenMalformed) ||
-			errors.Is(err, jwt.ErrTokenNotValidYet) ||
-			errors.Is(err, jwt.ErrTokenInvalidClaims) {
-			return nil, ErrInvalidToken
+		if internalErr != nil {
+			return nil, internalErr
 		}
-		return nil, fmt.Errorf("parse token: %w", err) // 内部故障
+		return nil, errs.ErrTokenInvalid
 	}
 
 	if token == nil || !token.Valid {
-		return nil, ErrInvalidToken
+		return nil, errs.ErrTokenInvalid
 	}
 
 	if claims.TokenType != expectedType {
-		return nil, ErrInvalidToken
+		return nil, errs.ErrTokenInvalid
 	}
 
 	return claims, nil
