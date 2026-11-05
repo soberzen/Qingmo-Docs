@@ -1,9 +1,7 @@
 package server
 
 import (
-	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -23,12 +21,6 @@ func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	db := database.New()
 	redis := database.NewRedis()
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := redis.WarmupRefreshSessions(ctx, db); err != nil {
-		log.Fatalf("warmup refresh sessions failed: %v", err)
-	}
 
 	NewServer := &Server{
 		port:  port,

@@ -55,7 +55,7 @@ func New() Service {
 	sqlDB.SetMaxIdleConns(25)
 	sqlDB.SetConnMaxLifetime(5 * time.Minute)
 
-	if err := db.AutoMigrate(&entity.UserEntity{}, &entity.RefreshSessionEntity{}); err != nil {
+	if err := db.AutoMigrate(&entity.UserEntity{}); err != nil {
 		log.Fatalf("auto migrate database failed: %v", err)
 	}
 

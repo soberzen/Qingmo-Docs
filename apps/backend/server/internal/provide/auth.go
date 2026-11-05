@@ -4,9 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
-	"time"
 
 	"doc-server/internal/auth"
 	"doc-server/internal/database"
@@ -65,7 +63,7 @@ func Login(
 		return "", "", "", err
 	}
 
-	refreshSession := entity.RefreshSessionEntity{
+	refreshSession := auth.RefreshSession{
 		SessionID: sessionId,
 		UserID:    uint(user.ID),
 		TokenHash: auth.HashToken(refreshToken),
@@ -77,15 +75,6 @@ func Login(
 	if err := redis.SaveRefreshSession(ctx, refreshSession); err != nil {
 		return "", "", "", err
 	}
-
-	go func(session entity.RefreshSessionEntity) {
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		defer cancel()
-
-		if err := db.DB().WithContext(ctx).Create(&session).Error; err != nil {
-			log.Printf("persist refresh session failed: %v", err)
-		}
-	}(refreshSession)
 
 	return accessToken, refreshToken, sessionId, nil
 }
@@ -156,19 +145,6 @@ func Logout(ctx context.Context, refreshToken string, tokenManager *auth.TokenMa
 	userId, err := strconv.ParseUint(claims.Subject, 10, 64)
 	if err != nil || userId == 0 {
 		return nil
-	}
-
-	result := db.DB().WithContext(ctx).Model(&entity.RefreshSessionEntity{}).Where(
-		"session_id = ? AND user_id = ?",
-		claims.SessionID,
-		userId,
-	).Update(
-		"revoked_at",
-		gorm.Expr("COALESCE(revoked_at, ?)", time.Now()),
-	)
-
-	if result.Error != nil {
-		return fmt.Errorf("revoke refresh session: %w", result.Error)
 	}
 
 	if err := redis.DeleteRefreshSession(ctx, claims.SessionID); err != nil {

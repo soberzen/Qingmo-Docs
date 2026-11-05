@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -18,7 +19,7 @@ type KeyPair struct {
 func GenerateKeyPair() (*KeyPair, error) {
 	private, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to generate RSA key: %w", err)
 	}
 
 	kid := uuid.New().String()
@@ -30,7 +31,7 @@ func GenerateKeyPair() (*KeyPair, error) {
 
 	pubBytes, err := x509.MarshalPKIXPublicKey(&private.PublicKey)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to marshal public key: %w", err)
 	}
 
 	publicPEM := pem.EncodeToMemory(&pem.Block{
